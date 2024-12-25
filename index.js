@@ -1,81 +1,81 @@
-const { Client, GatewayIntentBits } = require('discord.js');
+const express = require('express');
 const axios = require('axios');
-require('dotenv').config(); // To load the BOT_TOKEN from a .env file
+const { Client, GatewayIntentBits } = require('discord.js');
+require('dotenv').config(); // For loading environment variables
+
+const app = express();
+const port = process.env.PORT || 8080;  // Use Render's PORT environment variable or fallback to 8080
 
 // Discord Bot Setup
-const TOKEN = process.env.BOT_TOKEN; // Ensure your .env file contains BOT_TOKEN=<your_discord_bot_token>
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 
-const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-  ],
+client.once('ready', () => {
+    console.log('Discord bot is online!');
 });
 
 // Codeforces Rating Function
 async function getCodeforcesRating(handle) {
-  const url = `https://codeforces.com/api/user.info?handles=${handle}`;
-  try {
-    const response = await axios.get(url);
-    const data = response.data;
+    const url = `https://codeforces.com/api/user.info?handles=${handle}`;
+    try {
+        const response = await axios.get(url);
+        const data = response.data;
 
-    if (data.status === 'OK') {
-      const userInfo = data.result[0];
-      return {
-        handle: userInfo.handle || 'Unknown',
-        rating: userInfo.rating || 'Unrated',
-        rank: userInfo.rank || 'Unknown',
-        maxRating: userInfo.maxRating || 'Unknown',
-        maxRank: userInfo.maxRank || 'Unknown',
-      };
-    } else {
-      return { error: data.comment || 'Unknown error' };
+        if (data.status === 'OK') {
+            const userInfo = data.result[0];
+            return {
+                handle: userInfo.handle,
+                rating: userInfo.rating || 'Unrated',
+                rank: userInfo.rank || 'Unknown',
+                max_rating: userInfo.maxRating || 'Unknown',
+                max_rank: userInfo.maxRank || 'Unknown'
+            };
+        } else {
+            return { error: data.comment || 'Unknown error' };
+        }
+    } catch (error) {
+        return { error: error.message };
     }
-  } catch (error) {
-    return { error: error.message || 'An unknown error occurred' };
-  }
 }
 
-// Discord Bot Events
-client.once('ready', () => {
-  console.log(`Logged in as ${client.user.tag}`);
-});
-
+// Discord Bot Command to Fetch Codeforces Rating
 client.on('messageCreate', async (message) => {
-  if (message.author.bot) return;
+    if (message.author.bot) return;
 
-  if (message.channel.name === 'rapl-bot') {
-    const content = message.content;
-
-    message.reply(`Hi ${message.author}! You said: ${content}`);
-
-    if (content.startsWith('cfhandle')) {
-      try {
-        const args = content.split(' ');
+    if (message.content.startsWith('!cfhandle')) {
+        const args = message.content.split(' ');
         if (args.length < 2) {
-          return message.reply('Usage: `cfhandle <user_handle>`');
+            message.channel.send('Usage: `!cfhandle <user_handle>`');
+            return;
         }
+
         const handle = args[1];
         const result = await getCodeforcesRating(handle);
 
         if (result.error) {
-          message.reply(`Error: ${result.error}`);
+            message.channel.send(result.error);
         } else {
-          const response = `**Codeforces User Info:**\n` +
-                           `Handle: \`${result.handle}\`\n` +
-                           `Current Rating: \`${result.rating}\`\n` +
-                           `Current Rank: \`${result.rank}\`\n` +
-                           `Max Rating: \`${result.maxRating}\`\n` +
-                           `Max Rank: \`${result.maxRank}\``;
-          message.reply(response);
+            const response = `
+**Codeforces User Info:**
+Handle: \`${result.handle}\`
+Current Rating: \`${result.rating}\`
+Current Rank: \`${result.rank}\`
+Max Rating: \`${result.max_rating}\`
+Max Rank: \`${result.max_rank}\`
+            `;
+            message.channel.send(response);
         }
-      } catch (error) {
-        message.reply(`An error occurred: ${error.message}`);
-      }
     }
-  }
 });
 
-// Start the Bot
-client.login(TOKEN);
+// Login to Discord
+client.login(process.env.BOT_TOKEN);  // Ensure BOT_TOKEN is set in your environment variables
+
+// Express Web Server Setup (if needed)
+app.get('/', (req, res) => {
+    res.send('Hello, your bot is up and running!');
+});
+
+// Start the Express server
+app.listen(port, () => {
+    console.log(`Web server listening on port ${port}`);
+});
