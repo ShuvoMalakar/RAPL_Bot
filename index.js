@@ -72,13 +72,41 @@ client.on('messageCreate', async (message) => {
             message.channel.send(result.error);
         } else {
             const response = `
-**Codeforces User Info:**
-Handle: \`${result.handle}\`
-Current Rating: \`${result.rating}\`
-Current Rank: \`${result.rank}\`
-Max Rating: \`${result.max_rating}\`
-Max Rank: \`${result.max_rank}\`
-            `;
+📊 **Codeforces User Info:**
+========================
+🔹 **Handle:** ${result.handle}
+🔹 **Current Rating:** ${result.rating}
+🔹 **Current Rank:** ${result.rank}
+🔹 **Max Rating:** ${result.max_rating}
+🔹 **Max Rank:** ${result.max_rank}
+`;
+
+/*
+            const response = `
+\`\`\`diff
++ **Codeforces User Info:**
++ **Handle**: \`${result.handle}\`
++ **Current Rating**: \`${result.rating}\`
++ **Current Rank**: \`${result.rank}\`
++ **Max Rating**: \`${result.max_rating}\`
++ **Max Rank**: \`${result.max_rank}\`
+\`\`\`
+`;
+*/
+/*
+const response = `
+\`\`\`yaml
+Codeforces User Info:
+  Handle: ${result.handle}
+  Current Rating: ${result.rating}
+  Current Rank: ${result.rank}
+  Max Rating: ${result.max_rating}
+  Max Rank: ${result.max_rank}
+\`\`\`
+`;
+*/
+
+
             message.channel.send(response);
         }
     }
