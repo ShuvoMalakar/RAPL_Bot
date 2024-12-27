@@ -41,7 +41,7 @@ async function getCodeforcesRating(handle) {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
-    if (message.content.startsWith('!cfhandle')) {
+    if (message.content.startsWith('cfhandle')) {
         const args = message.content.split(' ');
         if (args.length < 2) {
             message.channel.send('Usage: `!cfhandle <user_handle>`');
