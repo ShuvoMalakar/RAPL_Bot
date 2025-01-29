@@ -105,8 +105,8 @@ async function handleCfhandleCommand(message, desiredServerId, desiredChannelId)
 🔹 **Handle:** ${result.handle}
 🔹 **Current Rating:** ${result.rating}
 🔹 **Current Rank:** ${result.rank}
-🔹 **Max Rating:** ${result.max_rating}
-🔹 **Max Rank:** ${result.max_rank}
+🔹 **Max Rating:** ${result.maxRating}
+🔹 **Max Rank:** ${result.maxRank}
 `;
 
         message.channel.send(response);
