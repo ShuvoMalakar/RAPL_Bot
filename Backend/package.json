@@ -3,6 +3,8 @@
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {
+        
+        "postinstall": "apt-get update && apt-get install -y chromium",
         "start": "node index.js"
     },
     "keywords": [],
