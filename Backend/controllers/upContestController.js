@@ -132,7 +132,7 @@ const upcomingContest = require('../models/upcomingContests'); // MongoDB model
     }
 }*/
 
-const puppeteer = require('puppeteer');
+/*const puppeteer = require('puppeteer');
 
 async function fetchUpcomingCodechefContests() {
     let browser;
@@ -146,10 +146,10 @@ async function fetchUpcomingCodechefContests() {
             headless: true,
         });
 
-        /*browser = await puppeteer.launch({ 
+        browser = await puppeteer.launch({ 
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
             headless: true 
-        });*/
+        });
         const page = await browser.newPage();
 
         // Set desktop viewport size
@@ -215,7 +215,69 @@ async function fetchUpcomingCodechefContests() {
             await browser.close();
         }
     }
+}*/
+
+
+
+
+async function fetchUpcomingCodechefContests() {
+    try {
+        const url = 'https://www.codechef.com/contests';
+        const { data } = await axios.get(url); // Fetch HTML content
+        const $ = cheerio.load(data); // Load HTML into Cheerio
+
+        const contests = [];
+        const now = moment().tz('Asia/Dhaka'); // Get current time in Dhaka timezone
+
+        // Find the "Upcoming Contests" table
+        let upcomingTableFound = false;
+
+        $('h3').each((_, h3) => {
+            if ($(h3).text().trim() === 'Upcoming Contests') {
+                upcomingTableFound = true;
+                const table = $(h3).next('table');
+
+                table.find('tbody tr').each((_, row) => {
+                    const cols = $(row).find('td');
+                    if (cols.length >= 4) {
+                        const name = $(cols[1]).text().trim();
+                        const link = 'https://www.codechef.com' + $(cols[1]).find('a').attr('href');
+                        const rawStartTime = $(cols[2]).text().trim(); // Example: "14 Feb 2025 21:30"
+                        const duration = $(cols[3]).text().trim();
+
+                        // Convert to proper date format in Dhaka time
+                        const contestStartTime = moment.tz(rawStartTime, 'DD MMM YYYY HH:mm', 'Asia/Dhaka');
+
+                        if (contestStartTime.isAfter(now)) { // Keep only future contests
+                            contests.push({
+                                name,
+                                link,
+                                startTime: contestStartTime.toDate(), // Convert to JS Date object
+                                startTimeIST: contestStartTime.format('DD MMM YYYY, hh:mm A'), // Formatted time
+                                duration
+                            });
+                        }
+                    }
+                });
+            }
+        });
+
+        if (!upcomingTableFound) {
+            console.log('Error: Could not find "Upcoming Contests" table on CodeChef.');
+            return [];
+        }
+
+        return contests;
+    } catch (error) {
+        console.error('Error fetching CodeChef contests:', error.message);
+        return [];
+    }
 }
+
+
+
+
+
 
 
 async function fetchUpcomingCodeforcesContests() {
