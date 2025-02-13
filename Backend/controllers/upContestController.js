@@ -138,18 +138,18 @@ async function fetchUpcomingCodechefContests() {
     let browser;
     try {
         // Launch a headless browser
-        /*browser = await puppeteer.launch({
-            executablePath: '/usr/bin/chromium-browser', // Set correct path
+        browser = await puppeteer.launch({
+            executablePath: '/opt/render/.cache/puppeteer/chrome/linux-133.0.6943.53/chrome', // Use installed Chrome
             args: ['--no-sandbox', '--disable-setuid-sandbox'], // Required for running in a server environment
 
             ///executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',  // Path to Chromium
             headless: true,
-        });*/
+        });
 
-        browser = await puppeteer.launch({ 
+        /*browser = await puppeteer.launch({ 
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
             headless: true 
-        });
+        });*/
         const page = await browser.newPage();
 
         // Set desktop viewport size
