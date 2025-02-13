@@ -132,19 +132,19 @@ const upcomingContest = require('../models/upcomingContests'); // MongoDB model
     }
 }*/
 
-/*const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer');
 
 async function fetchUpcomingCodechefContests() {
     let browser;
     try {
         // Launch a headless browser
-        browser = await puppeteer.launch({
+        /*browser = await puppeteer.launch({
             executablePath: '/opt/render/.cache/puppeteer/chrome/linux-133.0.6943.53/chrome', // Use installed Chrome
             args: ['--no-sandbox', '--disable-setuid-sandbox'], // Required for running in a server environment
 
             ///executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',  // Path to Chromium
             headless: true,
-        });
+        });*/
 
         browser = await puppeteer.launch({ 
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
@@ -215,12 +215,12 @@ async function fetchUpcomingCodechefContests() {
             await browser.close();
         }
     }
-}*/
+}
 
 
 
 
-async function fetchUpcomingCodechefContests() {
+/*async function fetchUpcomingCodechefContests() {
     try {
         const url = 'https://www.codechef.com/contests';
         const { data } = await axios.get(url); // Fetch HTML content
@@ -272,7 +272,7 @@ async function fetchUpcomingCodechefContests() {
         console.error('Error fetching CodeChef contests:', error.message);
         return [];
     }
-}
+}*/
 
 
 
