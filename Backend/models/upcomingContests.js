@@ -21,6 +21,14 @@ const upcomingContestSchema = new mongoose.Schema({
         type: String, 
         required: true 
     },
+    _5dReminder: {
+        type: Boolean,
+        default: false 
+    },
+    _2dReminder: {
+        type: Boolean,
+        default: false 
+    },
     _1dReminder: {
         type: Boolean,
         default: false 

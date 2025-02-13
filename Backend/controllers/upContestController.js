@@ -3,7 +3,7 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const mongoose = require('mongoose');
 const upcomingContest = require('../models/upcomingContests'); // MongoDB model
-const {client, codechef_timezone} = require('../index');
+//const {client, codechef_timezone} = require('../index');
 
 const puppeteer = require('puppeteer');
 
@@ -345,7 +345,7 @@ async function logUpcomingContests(desiredChannelId, client, EmbedBuilder) {
 
     console.log('Upcoming Contests:');
     let discordMessage = '';
-    const maxContests = 10; // Limit to 6 contests
+    const maxContests = 6; // Limit to 6 contests
     if(contests.length < maxContests){
         maxContests = contests.length;
     }
@@ -361,7 +361,7 @@ async function logUpcomingContests(desiredChannelId, client, EmbedBuilder) {
         console.log(`Link: ${contest.link}`);
         console.log(`----------------------------------------`);*/
 
-        discordMessage += `[${contest.name}](${contest.link})|${formattedTime}\n\n`;
+        discordMessage += `[${contest.name}](${contest.link})|${formattedTime}\n`;
     });
 
     // Send the message to Discord
@@ -399,74 +399,4 @@ async function sendToDiscord(desiredChannelId, client, message, EmbedBuilder) {
     }
 }
 
-
-// Function to send 5-day reminders
-async function send5DayReminders(desiredChannelId, client, EmbedBuilder) {
-    try {
-        // Get the current time in UTC
-        const now = moment().utc();
-        const fiveDaysLater = now.clone().add(5, 'days');
-
-        // Find contests starting within 5 days
-        const contests = await upcomingContest.find({
-            startTime: {
-                $gte: now.toDate(), // Contests starting after now
-                $lte: fiveDaysLater.toDate(), // Contests starting within 5 days
-            },
-            _1dReminder: false, // Only send reminders for contests that haven't been reminded yet
-        });
-
-        // Send reminders for each contest
-        for (const contest of contests) {
-            const contestStartTime = moment(contest.startTime).tz('Asia/Dhaka');
-            const remainingTime = moment.duration(contestStartTime.diff(now)); // Calculate remaining time
-
-            // Format the remaining time
-            const remainingDays = remainingTime.days();
-            const remainingHours = remainingTime.hours();
-            const remainingMinutes = remainingTime.minutes();
-            const remainingTimeString = `${remainingDays}d ${remainingHours}h ${remainingMinutes}m`;
-
-            // Create the reminder message
-            const reminderMessage = `Hello @everyone\n${contest.name}\n${contestStartTime.format('DD MMM YY, HH:mm')} Asia/Dhaka | ${remainingTimeString} | ${contest.link} ◳\nAbout to start in ${remainingTimeString}\n`;
-
-            const embed = new EmbedBuilder()
-                .setColor(0xff0000) // Red color
-                .setDescription(`**${contest.name}**`)
-                .addFields(
-                    { name:`**About to start in ${remainingTimeString}**`, value: `\`${contestStartTime.format('DD MMM YY, hh:mm A')} Asia/Dhaka | Duration: ${contest.duration} |\` [Link](${contest.link})`, inline: false },
-                );
-
-            // Send the reminder via Discord bot
-            try {
-                const channel = await client.channels.fetch(desiredChannelId);
-                if (!channel) {
-                    console.error("❌ Could not find the Discord channel.");
-                    return;
-                }
-                ///await channel.send(reminderMessage);
-                await channel.send({ content: 'Hello @everyone!', embeds: [embed] });
-                console.log("✅ Sent Reminder to Discord successfully!");
-            } catch (error) {
-                console.error("❌ Error sending reminder to Discord:", error.message);
-            }
-
-            // Directly update the _5dReminder field in the database
-            /*try {
-                await upcomingContest.updateOne(
-                    { name: contest.name }, // Filter by contest ID
-                    { $set: { _1dReminder: true } } // Set _5dReminder to true
-                );
-            } catch (error) {
-                console.error("❌ Error setting the _1dReminder to true:", error.message);
-            }*/
-        }
-
-        console.log(`Sent ${contests.length} reminders.`);
-    } catch (error) {
-        console.error('Error sending reminders:', error.message);
-    }
-}
-
-
-module.exports = { saveContestsToDB, logUpcomingContests, send5DayReminders };
+module.exports = { saveContestsToDB, logUpcomingContests};
