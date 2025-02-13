@@ -139,7 +139,7 @@ async function fetchUpcomingCodechefContests() {
     try {
         // Launch a headless browser
         browser = await puppeteer.launch({
-            executablePath: '/usr/bin/google-chrome-stable',
+            executablePath: '/usr/bin/chromium',
             ///executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',  // Path to Chromium
             headless: true,
         });
