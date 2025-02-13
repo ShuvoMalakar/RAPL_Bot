@@ -3,15 +3,21 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const mongoose = require('mongoose');
 const upcomingContest = require('../models/upcomingContests'); // MongoDB model
+const {client, codechef_timezone} = require('../index');
 
 const puppeteer = require('puppeteer');
+
 
 async function fetchUpcomingCodechefContests() {
     let browser;
     try {
-        // Launch a headless browser
+        // Detect system timezone dynamically
+        ///const systemTimezone = moment.tz.guess();
+        // Get the current time in IST
+        const now = moment().tz('UTC');
+        // For local sewver
         /*browser = await puppeteer.launch({
-            executablePath: '/opt/render/.cache/puppeteer/chrome/linux-133.0.6943.53/chrome', // Use installed Chrome
+            executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
             args: ['--no-sandbox', '--disable-setuid-sandbox'], // Required for running in a server environment
 
             ///executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',  // Path to Chromium
@@ -20,6 +26,7 @@ async function fetchUpcomingCodechefContests() {
 
         browser = await puppeteer.launch({ 
             ///executablePath:'/opt/render/.cache/puppeteer/chrome/linux-133.0.6943.53/chrome-linux64/chrome',
+            executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
             headless: true 
         });
@@ -60,20 +67,16 @@ async function fetchUpcomingCodechefContests() {
             return results;
         });
 
-        // Get the current time in IST
-        const now = moment().tz('Asia/Dhaka');
-
         // Filter out past contests and format the start time in IST
         const upcomingContests = contests
             .map(contest => {
                 const startDateTime = `${contest.startDate} ${contest.startTime}`;
-                const contestStartTime = moment.tz(startDateTime, 'DD MMM YYYY HH:mm', CODECHEF_TIMEZONE);
+                const contestStartTime = moment.tz(startDateTime, 'DD MMM YYYY HH:mm', 'UTC');//.tz('UTC');
 
                 return {
                     name: contest.name,
                     link: contest.link,
                     startTime: contestStartTime.toDate(), // Convert to JavaScript Date object
-                    startTimeIST: contestStartTime.format('DD MMM YYYY, hh:mm A'), // Format in IST
                     duration: contest.duration, // Include contest duration
                 };
             })
@@ -167,6 +170,22 @@ async function saveAtcoderContestsToDB() {
     const contests = await fetchUpcomingAtcoderContests();
     if (contests.length === 0) return;
 
+    try{
+        // Fetch all contests stored in the database
+        const storedContests = await upcomingContest.find({ OJ: 'Atcoder' });
+        const upcomingContestLinks = new Set(contests.map(c => c.link)); 
+
+        for (const contest of storedContests) {
+            if (!upcomingContestLinks.has(contest.link)) {
+                // If the contest is in the database but not in upcoming contests, delete it
+                await upcomingContest.deleteOne({ link: contest.link });
+                console.log(`Deleted old contest: ${contest.name}`);
+            }
+        }
+    }catch (error) {
+        return { error: error.message };
+    }
+
     for (const contest of contests) {
         try{  
             await upcomingContest.findOneAndUpdate(
@@ -200,6 +219,22 @@ async function saveCodechefContestsToDB() {
         return;
     }
 
+    try{
+        // Fetch all contests stored in the database
+        const storedContests = await upcomingContest.find({ OJ: 'Codechef' });
+        const upcomingContestLinks = new Set(contests.map(c => c.link)); 
+
+        for (const contest of storedContests) {
+            if (!upcomingContestLinks.has(contest.link)) {
+                // If the contest is in the database but not in upcoming contests, delete it
+                await upcomingContest.deleteOne({ link: contest.link });
+                console.log(`Deleted old contest: ${contest.name}`);
+            }
+        }
+    }catch (error) {
+        return { error: error.message };
+    }
+
     for (const contest of contests) {
         try{  
             await upcomingContest.findOneAndUpdate(
@@ -210,6 +245,52 @@ async function saveCodechefContestsToDB() {
                     link: contest.link,
                     duration: contest.duration,
                     OJ: "Codechef",
+                },
+                { new: true, upsert: true }
+            );
+            console.log(`✅ Stored: ${contest.name}`);
+        } catch (error) {
+            return { error: error.message };
+        }
+        /*if (!existing) {
+            await upcomingContest.create(contest);
+            console.log(`✅ Stored: ${contest.name}`);
+        } else {
+            console.log(`🔹 Already exists: ${contest.name}`);
+        }*/
+    }
+}
+
+async function saveCodeforcesContestsToDB() {
+    const contests = await fetchUpcomingCodeforcesContests();
+    if (contests.length === 0) return;
+
+    try{
+        // Fetch all contests stored in the database
+        const storedContests = await upcomingContest.find({ OJ: 'Codeforces' });
+        const upcomingContestLinks = new Set(contests.map(c => c.link)); 
+
+        for (const contest of storedContests) {
+            if (!upcomingContestLinks.has(contest.link)) {
+                // If the contest is in the database but not in upcoming contests, delete it
+                await upcomingContest.deleteOne({ link: contest.link });
+                console.log(`Deleted old contest: ${contest.name}`);
+            }
+        }
+    }catch (error) {
+        return { error: error.message };
+    }
+
+    for (const contest of contests) {
+        try{  
+            await upcomingContest.findOneAndUpdate(
+                { name: contest.name, OJ: "Codeforces", },
+                {
+                    name: contest.name,
+                    startTime: contest.startTime,
+                    link: contest.link,
+                    duration: contest.duration,
+                    OJ: "Codeforces",
                 },
                 { new: true, upsert: true }
             );
@@ -243,35 +324,6 @@ async function removePastContests() {
     }
 }
 
-async function saveCodeforcesContestsToDB() {
-    const contests = await fetchUpcomingCodeforcesContests();
-    if (contests.length === 0) return;
-
-    for (const contest of contests) {
-        try{  
-            await upcomingContest.findOneAndUpdate(
-                { name: contest.name, OJ: "Codeforces", },
-                {
-                    name: contest.name,
-                    startTime: contest.startTime,
-                    link: contest.link,
-                    duration: contest.duration,
-                    OJ: "Codeforces",
-                },
-                { new: true, upsert: true }
-            );
-            console.log(`✅ Stored: ${contest.name}`);
-        } catch (error) {
-            return { error: error.message };
-        }
-        /*if (!existing) {
-            await upcomingContest.create(contest);
-            console.log(`✅ Stored: ${contest.name}`);
-        } else {
-            console.log(`🔹 Already exists: ${contest.name}`);
-        }*/
-    }
-}
 
 async function saveContestsToDB(){
     await saveAtcoderContestsToDB();
