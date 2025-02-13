@@ -420,10 +420,10 @@ async function logUpcomingContests(desiredChannelId, client, EmbedBuilder) {
             .tz('Asia/Dhaka')
             .format('DD/MM/YY h:mmA');
 
-        console.log(`Name: ${contest.name}`);
+        /*console.log(`Name: ${contest.name}`);
         console.log(`Start Time (BST): ${formattedTime}`);
         console.log(`Link: ${contest.link}`);
-        console.log(`----------------------------------------`);
+        console.log(`----------------------------------------`);*/
 
         discordMessage += `[${contest.name}](${contest.link})|${formattedTime}\n\n`;
     });
