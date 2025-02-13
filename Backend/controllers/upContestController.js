@@ -195,7 +195,7 @@ async function fetchUpcomingCodechefContests() {
         const upcomingContests = contests
             .map(contest => {
                 const startDateTime = `${contest.startDate} ${contest.startTime}`;
-                const contestStartTime = moment.tz(startDateTime, 'DD MMM YYYY HH:mm', 'Asia/Dhaka');
+                const contestStartTime = moment.tz(startDateTime, 'DD MMM YYYY HH:mm', 'UTC');
 
                 return {
                     name: contest.name,
