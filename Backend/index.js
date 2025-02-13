@@ -1,14 +1,16 @@
 const express = require('express');
-const { Client, GatewayIntentBits } = require('discord.js');
+const cron = require('node-cron');
+const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
 require('dotenv').config(); // For loading environment variables
 const { processCommands } = require('./routes/commands'); // Import the new module
 const connectDB = require('./config/db');
+const { saveContestsToDB, logUpcomingContests, send5DayReminders } = require('./controllers/upContestController');
 
 const app = express();
 const port = process.env.PORT || 8080; // Use Render's PORT environment variable or fallback to 8080
 
 // Ensure required environment variables are set
-if ((!process.env.SERVER_ID) || (!process.env.CHANNEL_ID) || (!process.env.BOT_TOKEN)) {
+if ((!process.env.SERVER_ID) || (!process.env.CHANNEL_ID) || (!process.env.BOT_TOKEN) || (!process.env.REMINDER_CHANNEL_ID)) {
     console.error('Error: Environment variables DESIRED_SERVER_ID, DESIRED_CHANNEL_ID, or BOT_TOKEN are not set.\nCheck the environment variables.');
     process.exit(1); // Exit the bot if these variables are missing
 }
@@ -16,6 +18,7 @@ if ((!process.env.SERVER_ID) || (!process.env.CHANNEL_ID) || (!process.env.BOT_T
 // Retrieve the desired server and channel IDs from environment variables
 const desiredServerId = process.env.SERVER_ID;
 const desiredChannelId = process.env.CHANNEL_ID;
+const reminderdChannelId = process.env.CHANNEL_ID;
 
 // Discord Bot Setup
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
@@ -44,3 +47,19 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`Web server listening on port ${port}`);
 });
+
+/*cron.schedule('* * * * *', async () => {
+    logUpcomingContests();
+});*/
+/*setInterval(async () => {
+    await saveContestsToDB();
+    logUpcomingContests(desiredChannelId, client);
+}, 20000); // Runs every 20 seconds*/
+
+app.post('/upcoming-contests', async (req, res) => {
+    await saveContestsToDB();
+    await logUpcomingContests(desiredChannelId, client, EmbedBuilder);
+    send5DayReminders(reminderdChannelId, client, EmbedBuilder);
+});
+
+module.exports = client;
