@@ -147,6 +147,7 @@ async function fetchUpcomingCodechefContests() {
         });*/
 
         browser = await puppeteer.launch({ 
+            executablePath:'chrome@133.0.6943.53 /opt/render/.cache/puppeteer/chrome/linux-133.0.6943.53/chrome-linux64/chrome',
             args: ['--no-sandbox', '--disable-setuid-sandbox'],
             headless: true 
         });
