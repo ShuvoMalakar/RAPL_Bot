@@ -21,7 +21,7 @@ if ((!process.env.SERVER_ID) || (!process.env.CHANNEL_ID) || (!process.env.BOT_T
 const desiredServerId = process.env.SERVER_ID;
 const desiredChannelId = process.env.CHANNEL_ID;
 const testChannelId = process.env.CHANNEL_ID;
-const reminderdChannelId = process.env.CHANNEL_ID;
+const reminderdChannelId = process.env.REMINDER_CHANNEL_ID;
 const codechef_timezone = process.env.CODECHEF_TIMEZONE;
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
