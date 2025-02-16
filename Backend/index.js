@@ -3,9 +3,8 @@ const express = require('express');
 const mongoose = require("mongoose");
 const moment = require('moment-timezone');
 const cron = require('node-cron');
-const Discord = require('discord.js');
+const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
 require('dotenv').config();
-///const loginBot = require('./config/bot');
 const { processCommands } = require('./routes/commands'); // Import the new module
 ///const  {connectDB1, connectDB2} = require('./config/db');
 const  {db1, db2} = require('./config/db');
@@ -38,16 +37,9 @@ const tfcControllerId = process.env.TFC_CONTROLLER_CHANNEL;
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-const EmbedBuilder=Discord.EmbedBuilder;
 
 // Discord Bot Setup
-const client = new Discord.Client({ 
-    intents: [
-        Discord.GatewayIntentBits.Guilds, 
-        Discord.GatewayIntentBits.GuildMessages, 
-        Discord.GatewayIntentBits.MessageContent
-    ] 
-});
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 
 ///const db1 = connectDB1();
 //const db2 = connectDB2();
@@ -69,10 +61,10 @@ client.on('messageCreate', (message) => {
 });
 
 // Login to Discord
-///client.login(process.env.BOT_TOKEN); // Ensure BOT_TOKEN is set in your environment variables
+const loginBot = client.login(process.env.BOT_TOKEN); // Ensure BOT_TOKEN is set in your environment variables
 
 // Wrap client.login in a Promise
-const loginBot = () => {
+/*const loginBot = () => {
     return new Promise((resolve, reject) => {
         client.login(process.env.BOT_TOKEN)
             .then(() => {
@@ -105,9 +97,9 @@ const startApp = async () => {
     }
 };
 
-startApp();
+startApp();*/
 
-/*Promise.all([db1.asPromise(), db2.asPromise()])
+Promise.all([db1.asPromise(), db2.asPromise(), loginBot])
     .then(() => {
         console.log("All databases connected!");
         app.listen(port, () => {
@@ -117,7 +109,7 @@ startApp();
     .catch((err) => {
         console.error("Failed to connect to databases:", err.message);
         process.exit(1);
-    });*/
+    });
 
 
 // Express Web Server Setup (Optional)
