@@ -49,7 +49,7 @@ const startBot = async () => {
     }
 };
 
-//startBot();
+startBot();
 
 startBot().then(() => {
     return Promise.all([db1.asPromise(), db2.asPromise()]);
