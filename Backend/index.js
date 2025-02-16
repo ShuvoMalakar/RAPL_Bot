@@ -8,6 +8,7 @@ const { processCommands } = require('./routes/commands');
 const { db1, db2 } = require('./config/db');
 const { saveContestsToDB, logUpcomingContests } = require('./controllers/upContestController');
 const { send5DayReminders, send2DayReminders, send1DayReminders, send2hoursReminders, send20minutesReminders } = require('./controllers/contestReminders');
+const { tfc5DayReminders, tfc2DayReminders,tfc1DayReminders, tfc2hoursReminders,  tfc20minutesReminders } =require('./controllers/tfcReminder');
 ///require('dotenv').config();
 
 const app = express();
@@ -103,6 +104,11 @@ app.post('/contests-reminders', async (req, res) => {
         await send1DayReminders(process.env.REMINDER_CHANNEL_ID, client, EmbedBuilder);
         await send2DayReminders(process.env.CHANNEL_ID, client, EmbedBuilder);
         await send5DayReminders(process.env.CHANNEL_ID, client, EmbedBuilder);
+        await tfc20minutesReminders(process.env.TFC_CONTROLLER_CHANNEL, client, EmbedBuilder);
+        await tfc2hoursReminders(process.env.TFC_CONTROLLER_CHANNEL, client, EmbedBuilder);
+        await tfc1DayReminders(process.env.REMINDER_CHANNEL_ID, client, EmbedBuilder);
+        await tfc2DayReminders(process.env.CHANNEL_ID, client, EmbedBuilder);
+        await tfc5DayReminders(process.env.CHANNEL_ID, client, EmbedBuilder);
         res.status(200).send('Contest reminders sent successfully.');
     } catch (error) {
         console.error('Error sending contest reminders:', error.message);

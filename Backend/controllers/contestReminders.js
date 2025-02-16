@@ -35,7 +35,7 @@ async function send5DayReminders(desiredChannelId, client, EmbedBuilder) {
             const reminderMessage = `Hello @everyone\n${contest.name}\n${contestStartTime.format('DD MMM YY, HH:mm')} Asia/Dhaka | ${remainingTimeString} | ${contest.link} ◳\nAbout to start in ${remainingTimeString}\n`;
 
             const embed = new EmbedBuilder()
-                .setColor(0xff0000) // Red color
+                .setColor(0x00ff00) // Red color
                 .setDescription(`**${contest.name}**`)
                 .addFields(
                     { name:`**About to start in ${remainingTimeString}**`, value: `\`${contestStartTime.format('DD MMM YY, hh:mm A')} Asia/Dhaka | Duration: ${contest.duration} |\` [Link](${contest.link})`, inline: false },
@@ -49,7 +49,7 @@ async function send5DayReminders(desiredChannelId, client, EmbedBuilder) {
                     return;
                 }
                 ///await channel.send(reminderMessage);
-                await channel.send({ content: 'Hello @everyone!', embeds: [embed] });
+                await channel.send({ content:`📊 Starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
                 console.log("✅ Sent Reminder to Discord successfully!");
             } catch (error) {
                 console.error("❌ Error sending reminder to Discord:", error.message);
@@ -103,7 +103,7 @@ async function send2DayReminders(desiredChannelId, client, EmbedBuilder) {
             const reminderMessage = `Hello @everyone\n${contest.name}\n${contestStartTime.format('DD MMM YY, HH:mm')} Asia/Dhaka | ${remainingTimeString} | ${contest.link} ◳\nAbout to start in ${remainingTimeString}\n`;
 
             const embed = new EmbedBuilder()
-                .setColor(0xff0000) // Red color
+                .setColor(0x00ff00) // Red color
                 .setDescription(`**${contest.name}**`)
                 .addFields(
                     { name:`**About to start in ${remainingTimeString}**`, value: `\`${contestStartTime.format('DD MMM YY, hh:mm A')} Asia/Dhaka | Duration: ${contest.duration} |\` [Link](${contest.link})`, inline: false },
@@ -117,7 +117,7 @@ async function send2DayReminders(desiredChannelId, client, EmbedBuilder) {
                     return;
                 }
                 ///await channel.send(reminderMessage);
-                await channel.send({ content: 'Hello @everyone!', embeds: [embed] });
+                await channel.send({ content: `📊 Starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
                 console.log("✅ Sent Reminder to Discord successfully!");
             } catch (error) {
                 console.error("❌ Error sending reminder to Discord:", error.message);
@@ -167,16 +167,16 @@ async function send1DayReminders(desiredChannelId, client, EmbedBuilder) {
             const remainingTime = moment.duration(contestStartTime.diff(now)); // Calculate remaining time
 
             // Format the remaining time
-            const remainingDays = remainingTime.days();
+            ///const remainingDays = remainingTime.days();
             const remainingHours = remainingTime.hours();
             const remainingMinutes = remainingTime.minutes();
-            const remainingTimeString = `${remainingDays}d ${remainingHours}h ${remainingMinutes}m`;
+            const remainingTimeString = `${remainingHours}h ${remainingMinutes}m`;
 
             // Create the reminder message
             const reminderMessage = `Hello @everyone\n${contest.name}\n${contestStartTime.format('DD MMM YY, HH:mm')} Asia/Dhaka | ${remainingTimeString} | ${contest.link} ◳\nAbout to start in ${remainingTimeString}\n`;
 
             const embed = new EmbedBuilder()
-                .setColor(0xff0000) // Red color
+                .setColor(0x00ff00) // Red color
                 .setDescription(`**${contest.name}**`)
                 .addFields(
                     { name:`**About to start in ${remainingTimeString}**`, value: `\`${contestStartTime.format('DD MMM YY, hh:mm A')} Asia/Dhaka | Duration: ${contest.duration} |\` [Link](${contest.link})`, inline: false },
@@ -190,7 +190,7 @@ async function send1DayReminders(desiredChannelId, client, EmbedBuilder) {
                     return;
                 }
                 ///await channel.send(reminderMessage);
-                await channel.send({ content: 'Hello @everyone!', embeds: [embed] });
+                await channel.send({ content: `📊 Starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
                 console.log("✅ Sent Reminder to Discord successfully!");
             } catch (error) {
                 console.error("❌ Error sending reminder to Discord:", error.message);
@@ -250,7 +250,7 @@ async function send2hoursReminders(desiredChannelId, client, EmbedBuilder) {
             const reminderMessage = `Hello @everyone\n${contest.name}\n${contestStartTime.format('DD MMM YY, HH:mm')} Asia/Dhaka | ${remainingTimeString} | ${contest.link} ◳\nAbout to start in ${remainingTimeString}\n`;
 
             const embed = new EmbedBuilder()
-                .setColor(0xff0000) // Red color
+                .setColor(0x00ff00) // Red color
                 .setDescription(`**${contest.name}**`)
                 .addFields(
                     { name:`**About to start in ${remainingTimeString}**`, value: `\`${contestStartTime.format('DD MMM YY, hh:mm A')} Asia/Dhaka | Duration: ${contest.duration} |\` [Link](${contest.link})`, inline: false },
@@ -264,7 +264,7 @@ async function send2hoursReminders(desiredChannelId, client, EmbedBuilder) {
                     return;
                 }
                 ///await channel.send(reminderMessage);
-                await channel.send({ content: 'Hello @everyone!', embeds: [embed] });
+                await channel.send({ content: `📊 Starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
                 console.log("✅ Sent Reminder to Discord successfully!");
             } catch (error) {
                 console.error("❌ Error sending reminder to Discord:", error.message);
@@ -325,7 +325,7 @@ async function send20minutesReminders(desiredChannelId, client, EmbedBuilder) {
             const reminderMessage = `Hello @everyone\n${contest.name}\n${contestStartTime.format('DD MMM YY, HH:mm')} Asia/Dhaka | ${remainingTimeString} | ${contest.link} ◳\nAbout to start in ${remainingTimeString}\n`;
 
             const embed = new EmbedBuilder()
-                .setColor(0xff0000) // Red color
+                .setColor(0x00ff00) // Red color
                 .setDescription(`**${contest.name}**`)
                 .addFields(
                     { name:`**About to start in ${remainingTimeString}**`, value: `\`${contestStartTime.format('DD MMM YY, hh:mm A')} Asia/Dhaka | Duration: ${contest.duration} |\` [Link](${contest.link})`, inline: false },
@@ -339,7 +339,7 @@ async function send20minutesReminders(desiredChannelId, client, EmbedBuilder) {
                     return;
                 }
                 ///await channel.send(reminderMessage);
-                await channel.send({ content: 'Hello @everyone!', embeds: [embed] });
+                await channel.send({ content: `📊 Starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
                 console.log("✅ Sent Reminder to Discord successfully!");
             } catch (error) {
                 console.error("❌ Error sending reminder to Discord:", error.message);

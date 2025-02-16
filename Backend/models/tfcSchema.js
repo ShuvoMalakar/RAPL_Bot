@@ -18,7 +18,7 @@ const TFCSchema = new mongoose.Schema({
     },
     duration: {
         type: String, 
-        default: "3" 
+        default: "3 hrs" 
     },
     _5dReminder: {
         type: Boolean,

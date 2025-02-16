@@ -1,5 +1,6 @@
 const TFC = require('../models/tfcSchema');
 const moment = require('moment-timezone');
+const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
 
 // Function to validate and parse date-time
 const parseTFCDateTime = (tfcName, dateStr, timeStr) => {
@@ -87,6 +88,20 @@ const upsertTFCEvent = async (tfcName, dateStr, timeStr) => {
     }
 };
 
+// Function to fetch the last 10 TFC events
+const fetchLast5TFC = async () => {
+    try {
+        const last10TFC = await TFC.find()
+            .sort({ date: -1 }) // Sort by date in descending order (newest first)
+            .limit(5); // Limit to 10 entries
+
+        return last10TFC;
+    } catch (error) {
+        console.error("Error fetching last 10 TFC events:", error.message);
+        return [];
+    }
+};
+
 async function handletfcCommand(message) {
 
     const args = await message.content.split(' ');
@@ -104,9 +119,27 @@ async function handletfcCommand(message) {
     if (result.error) {
         message.channel.send(result.error);
     } else {
-        ///const response = `📊 TFC Updated successfully!`;
+        const last5TFC = await fetchLast5TFC();
+
+        // Create the success message
         const response = `📊 TFC Updated successfully!\n**Name:** ${result.tfcName}\n**Date (UTC):** ${result.eventDateTime.toISOString()}`;
-        message.channel.send(response);
+
+        // Create an embed for the last 10 TFC events
+        const embed = new EmbedBuilder()
+            .setColor(0x00ff00) // Green color
+            .setTitle("Last 5 TFC Events")
+            .setDescription("Here are the most recent 10 TFC events:")
+            .addFields(
+                last5TFC.map((tfc, index) => ({
+                    name: `TFC ${index + 1}: ${tfc.name}`,
+                    value: `Date: ${moment.utc(tfc.date).tz("Asia/Dhaka").format("DD MMM YYYY, hh:mm A")}`,
+                    inline: false
+                }))
+            );
+
+        // Send the response and embed
+        
+        message.channel.send({ content: response, embeds: [embed] });
 
         console.log('Message sent to the desired channel.');
     }
