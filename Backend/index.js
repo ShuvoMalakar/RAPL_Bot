@@ -1,16 +1,17 @@
-
-const moment = require('moment-timezone');
-const mongoose = require("mongoose");
+ // For loading environment variables
 const express = require('express');
+const mongoose = require("mongoose");
+const moment = require('moment-timezone');
 const cron = require('node-cron');
 const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
-require('dotenv').config(); // For loading environment variables
+require('dotenv').config();
 const { processCommands } = require('./routes/commands'); // Import the new module
 ///const  {connectDB1, connectDB2} = require('./config/db');
 const  {db1, db2} = require('./config/db');
 const { saveContestsToDB, logUpcomingContests, } = require('./controllers/upContestController');
 const { send5DayReminders, send2DayReminders,send1DayReminders, send2hoursReminders,  send20minutesReminders } = require('./controllers/contestReminders');
 const {fetchAndLogUsers} = require('./controllers/usersController');
+
 
 const app = express();
 const port = process.env.PORT || 8080; // Use Render's PORT environment variable or fallback to 8080
@@ -60,7 +61,20 @@ client.on('messageCreate', (message) => {
 });
 
 // Login to Discord
-await client.login(process.env.BOT_TOKEN); // Ensure BOT_TOKEN is set in your environment variables
+client.login(process.env.BOT_TOKEN); // Ensure BOT_TOKEN is set in your environment variables
+
+Promise.all([db1.asPromise(), db2.asPromise()])
+    .then(() => {
+        console.log("All databases connected!");
+        app.listen(port, () => {
+            console.log(`Server running on port ${port}`);
+        });
+    })
+    .catch((err) => {
+        console.error("Failed to connect to databases:", err.message);
+        process.exit(1);
+    });
+
 
 // Express Web Server Setup (Optional)
 app.get('/', (req, res) => {
@@ -100,17 +114,7 @@ app.post('/contests-reminders', async (req, res) => {
     await send5DayReminders(testChannelId, client, EmbedBuilder);
 });
 
-Promise.all([db1.asPromise(), db2.asPromise()])
-    .then(() => {
-        console.log("All databases connected!");
-        app.listen(port, () => {
-            console.log(`Server running on port ${port}`);
-        });
-    })
-    .catch((err) => {
-        console.error("Failed to connect to databases:", err.message);
-        process.exit(1);
-    });
+
 
 module.exports = {
     client, 
