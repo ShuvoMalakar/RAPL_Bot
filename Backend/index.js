@@ -79,13 +79,13 @@ Promise.all([db1.asPromise(), db2.asPromise(), startBot])
 
 // Express Routes
 app.get('/', (req, res) => {
-    startBot();
+    ///startBot();
     res.send('Hello, your bot is up and running!');
 });
 
 app.post('/upcoming-contests', async (req, res) => {
     try {
-        await startBot();
+        ///await startBot();
         await saveContestsToDB();
         await logUpcomingContests(process.env.CHANNEL_ID, client, EmbedBuilder);
         res.status(200).send('Upcoming contests updated successfully.');
@@ -97,7 +97,7 @@ app.post('/upcoming-contests', async (req, res) => {
 
 app.post('/contests-reminders', async (req, res) => {
     try {
-        await startBot();
+        ///await startBot();
         await send20minutesReminders(process.env.REMINDER_CHANNEL_ID, client, EmbedBuilder);
         await send2hoursReminders(process.env.REMINDER_CHANNEL_ID, client, EmbedBuilder);
         await send1DayReminders(process.env.REMINDER_CHANNEL_ID, client, EmbedBuilder);
