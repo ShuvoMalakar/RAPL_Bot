@@ -1,5 +1,5 @@
-const express = require('express');
 require('dotenv').config();
+const express = require('express');
 const mongoose = require("mongoose");
 const moment = require('moment-timezone');
 const cron = require('node-cron');
@@ -49,10 +49,23 @@ const startBot = async () => {
     }
 };
 
-startBot();
+//startBot();
+
+startBot().then(() => {
+    return Promise.all([db1.asPromise(), db2.asPromise()]);
+}).then(() => {
+    console.log("✅ All databases connected!");
+    app.listen(port, () => {
+        console.log(`🚀 Server running on port ${port}`);
+    });
+}).catch((err) => {
+    console.error("❌ Error initializing app:", err.message);
+    process.exit(1); // Stop the app if anything fails
+});
+
 
 // Database Connection
-Promise.all([db1.asPromise(), db2.asPromise(), startBot])
+/*Promise.all([db1.asPromise(), db2.asPromise(), startBot])
     .then(() => {
         console.log("All databases connected!");
         app.listen(port, () => {
@@ -67,7 +80,7 @@ Promise.all([db1.asPromise(), db2.asPromise(), startBot])
 // Express Routes
 app.get('/', (req, res) => {
     res.send('Hello, your bot is up and running!');
-});
+});*/
 
 app.post('/upcoming-contests', async (req, res) => {
     try {
