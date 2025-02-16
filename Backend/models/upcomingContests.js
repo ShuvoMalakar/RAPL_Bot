@@ -1,4 +1,7 @@
-const mongoose = require('mongoose');
+
+const mongoose = require("mongoose");
+//const {db1} = require('../index');
+const { db1 } = require("../config/db"); // Ensure the path is correct
 
 const upcomingContestSchema = new mongoose.Schema({
     name: {
@@ -43,4 +46,6 @@ const upcomingContestSchema = new mongoose.Schema({
     },
 });
 
-module.exports = mongoose.model('upcomingContest', upcomingContestSchema);
+upcomingContest = db1.model('upcomingContest', upcomingContestSchema);
+
+module.exports = upcomingContest;

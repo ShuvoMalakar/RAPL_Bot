@@ -1,5 +1,23 @@
 const axios = require('axios');
 const { handleCfhandleCommand } = require("../controllers/cfController");
+/*const  {
+    client, 
+    codechef_timezone,
+    desiredChannelId,
+    tfcChannelId,
+    tfcControllerId,
+    reminderdChannelId,
+    desiredServerId,
+    testChannelId, 
+} = require('../index');*/
+
+const desiredServerId = process.env.SERVER_ID;
+const desiredChannelId = process.env.CHANNEL_ID;
+const testChannelId = process.env.CHANNEL_ID;
+const reminderdChannelId = process.env.REMINDER_CHANNEL_ID;
+const codechef_timezone = process.env.CODECHEF_TIMEZONE;
+const tfcChannelId = process.env.TFC_CHANNEL;
+const tfcControllerId = process.env.TFC_CONTROLLER_CHANNEL;
 /*// Function to fetch Codeforces rating
 async function getCodeforcesRating(handle) {
     const url = `https://codeforces.com/api/user.info?handles=${handle}`;
@@ -25,7 +43,7 @@ async function getCodeforcesRating(handle) {
 }*/
 
 // Command handler for `cfhandle`
-async function processCommands(message, desiredServerId, desiredChannelId) {
+async function processCommands(message) {
     if (message.guild.id !== desiredServerId || message.channel.id !== desiredChannelId) {
         console.log('Not from the desired server or channel.');
         return; // Ignore messages from other servers or channels
