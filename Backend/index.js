@@ -3,8 +3,9 @@ const express = require('express');
 const mongoose = require("mongoose");
 const moment = require('moment-timezone');
 const cron = require('node-cron');
-const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
+const Discord = require('discord.js');
 require('dotenv').config();
+///const loginBot = require('./config/bot');
 const { processCommands } = require('./routes/commands'); // Import the new module
 ///const  {connectDB1, connectDB2} = require('./config/db');
 const  {db1, db2} = require('./config/db');
@@ -37,9 +38,16 @@ const tfcControllerId = process.env.TFC_CONTROLLER_CHANNEL;
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+const EmbedBuilder=Discord.EmbedBuilder;
 
 // Discord Bot Setup
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
+const client = new Discord.Client({ 
+    intents: [
+        Discord.GatewayIntentBits.Guilds, 
+        Discord.GatewayIntentBits.GuildMessages, 
+        Discord.GatewayIntentBits.MessageContent
+    ] 
+});
 
 ///const db1 = connectDB1();
 //const db2 = connectDB2();
@@ -61,9 +69,45 @@ client.on('messageCreate', (message) => {
 });
 
 // Login to Discord
-client.login(process.env.BOT_TOKEN); // Ensure BOT_TOKEN is set in your environment variables
+///client.login(process.env.BOT_TOKEN); // Ensure BOT_TOKEN is set in your environment variables
 
-Promise.all([db1.asPromise(), db2.asPromise()])
+// Wrap client.login in a Promise
+const loginBot = () => {
+    return new Promise((resolve, reject) => {
+        client.login(process.env.BOT_TOKEN)
+            .then(() => {
+                console.log('Discord bot logged in successfully!');
+                resolve();
+            })
+            .catch((error) => {
+                console.error('Error logging in to Discord:', error.message);
+                reject(error);
+            });
+    });
+};
+
+const startApp = async () => {
+    try {
+        // Log in the bot
+        await loginBot();
+
+        // Connect to databases
+        await Promise.all([db1.asPromise(), db2.asPromise()]);
+        console.log("All databases connected!");
+
+        // Start the Express server
+        app.listen(port, () => {
+            console.log(`Server running on port ${port}`);
+        });
+    } catch (error) {
+        console.error('Error starting the application:', error.message);
+        process.exit(1);
+    }
+};
+
+startApp();
+
+/*Promise.all([db1.asPromise(), db2.asPromise()])
     .then(() => {
         console.log("All databases connected!");
         app.listen(port, () => {
@@ -73,7 +117,7 @@ Promise.all([db1.asPromise(), db2.asPromise()])
     .catch((err) => {
         console.error("Failed to connect to databases:", err.message);
         process.exit(1);
-    });
+    });*/
 
 
 // Express Web Server Setup (Optional)
