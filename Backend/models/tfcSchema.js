@@ -15,7 +15,31 @@ const TFCSchema = new mongoose.Schema({
     },
     contestId: {
         type: Number,
-    }
+    },
+    duration: {
+        type: String, 
+        default: "3" 
+    },
+    _5dReminder: {
+        type: Boolean,
+        default: false 
+    },
+    _2dReminder: {
+        type: Boolean,
+        default: false 
+    },
+    _1dReminder: {
+        type: Boolean,
+        default: false 
+    },
+    _2hReminder: {
+        type: Boolean,
+        default: false 
+    },
+    _20mReminder: {
+        type: Boolean,
+        default: false 
+    },
 });
 
 const TFC = db1.model('TFC', TFCSchema);

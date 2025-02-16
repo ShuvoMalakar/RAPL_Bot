@@ -7,13 +7,13 @@ const parseTFCDateTime = (tfcName, dateStr, timeStr) => {
         throw new Error("Invalid TFC name format. Expected format: TFC-01 or TFC-1");
     }
 
-    const dateFormats = ["D/MM/YYYY", "DD/MM/YYYY","D/M/YYYY","DD/M/YYYY"];
+    /*const dateFormats = ["D/MM/YYYY", "DD/MM/YYYY","D/M/YYYY","DD/M/YYYY"];
     const parsedDate = moment.tz(dateStr, dateFormats, true, "Asia/Dhaka");
     if (!parsedDate.isValid()) {
         throw new Error("Invalid date format. Expected format: MM/DD/YYYY or M/D/YYYY");
     }
 
-    const timeFormats = ["hA", "hhA", "hh:mmA",  "hh:mmA", "h:mmA", "h:mm A"];
+    const timeFormats = ["hA", "hhA", "hh:mmA",  "hh:mmA", "h:mmA", "h:mmA"];
     const parsedTime = moment.tz(timeStr, timeFormats, true, "Asia/Dhaka");
     if (!parsedTime.isValid()) {
         throw new Error("Invalid time format. Expected format: hA or h:mm A (e.g., 3PM or 3:05 PM)");
@@ -41,7 +41,27 @@ const parseTFCDateTime = (tfcName, dateStr, timeStr) => {
     // Log the converted UTC time
     console.log("Converted to UTC:", utcDateTime.format("YYYY-MM-DD HH:mm:ss"));
 
-    return subtractedTime.toDate();
+    return subtractedTime.toDate();*/
+    // Combine date and time
+    const dateTimeString = `${dateStr} ${timeStr}`;
+
+    // Parse in Asia/Dhaka timezone
+    const parsedDateTime = moment.tz(dateTimeString, "DD/MM/YYYY h:mmA", "Asia/Dhaka");
+
+    if (!parsedDateTime.isValid()) {
+        throw new Error("Invalid date or time format. Expected format: DD/MM/YYYY h:mmA (e.g., 12/02/2025 3:05 PM)");
+    }
+
+    // Log the parsed time in Asia/Dhaka
+    console.log("Parsed Date (Asia/Dhaka):", parsedDateTime.format("YYYY-MM-DD HH:mm:ss"));
+
+    // Convert to UTC
+    const utcDateTime = parsedDateTime.utc();
+
+    // Log the converted UTC time
+    console.log("Converted to UTC:", utcDateTime.format("YYYY-MM-DD HH:mm:ss"));
+
+    return utcDateTime.toDate();
 
 };
 
