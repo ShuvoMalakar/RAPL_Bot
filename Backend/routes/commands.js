@@ -51,7 +51,7 @@ async function processCommands(message) {
 
     if (!message.content.startsWith('!cfhandle')) return;
 
-    await handleCfhandleCommand(message, desiredServerId, desiredChannelId);
+    await handleCfhandleCommand(message);
 }
 
 module.exports = {

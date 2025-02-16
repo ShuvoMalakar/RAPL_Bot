@@ -84,7 +84,7 @@ async function getCodeforcesRating(handle) {
     }
 }
 
-async function handleCfhandleCommand(message, desiredServerId, desiredChannelId) {
+async function handleCfhandleCommand(message) {
 
     const args = message.content.split(' ');
     if (args.length < 2) {
