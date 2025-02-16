@@ -110,6 +110,9 @@ async function handleCfhandleCommand(message) {
 `;
 
         message.channel.send(response);
+        
+
+
         console.log('Message sent to the desired channel.');
     }
 }

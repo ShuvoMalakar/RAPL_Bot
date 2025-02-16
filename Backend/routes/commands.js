@@ -1,5 +1,7 @@
 const axios = require('axios');
+const moment = require('moment-timezone');
 const { handleCfhandleCommand } = require("../controllers/cfController");
+const { handletfcCommand } = require("../controllers/tfcController");
 /*const  {
     client, 
     codechef_timezone,
@@ -44,14 +46,29 @@ async function getCodeforcesRating(handle) {
 
 // Command handler for `cfhandle`
 async function processCommands(message) {
-    if (message.guild.id !== desiredServerId || message.channel.id !== desiredChannelId) {
-        console.log('Not from the desired server or channel.');
+    if (message.guild.id !== desiredServerId ) {
+        console.log('Not from the desired server.');
         return; // Ignore messages from other servers or channels
     }
 
-    if (!message.content.startsWith('!cfhandle')) return;
+    if (message.channel.id == desiredChannelId){
+        if (!message.content.startsWith('!cfhandle')) return;
 
-    await handleCfhandleCommand(message);
+        await handleCfhandleCommand(message);
+    }
+    else if(message.channel.id == tfcControllerId){
+        if (!message.content.startsWith('!uptfc')){
+            console.log('Wrong command.');
+            return;
+        } 
+        await handletfcCommand(message);
+    }
+    else{
+        console.log('Not from the desired channel.');
+        return;
+    };
+
+    
 }
 
 module.exports = {
