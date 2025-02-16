@@ -43,17 +43,7 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBit
 ///const db1 = connectDB1();
 //const db2 = connectDB2();
 
-Promise.all([db1.asPromise(), db2.asPromise()])
-    .then(() => {
-        console.log("All databases connected!");
-        app.listen(port, () => {
-            console.log(`Server running on port ${process.env.PORT}`);
-        });
-    })
-    .catch((err) => {
-        console.error("Failed to connect to databases:", err.message);
-        process.exit(1);
-    });
+
 
 
 // connectDB2();
@@ -70,7 +60,7 @@ client.on('messageCreate', (message) => {
 });
 
 // Login to Discord
-client.login(process.env.BOT_TOKEN); // Ensure BOT_TOKEN is set in your environment variables
+await client.login(process.env.BOT_TOKEN); // Ensure BOT_TOKEN is set in your environment variables
 
 // Express Web Server Setup (Optional)
 app.get('/', (req, res) => {
@@ -109,6 +99,18 @@ app.post('/contests-reminders', async (req, res) => {
     //await delay(5000); // 1-second delay
     await send5DayReminders(testChannelId, client, EmbedBuilder);
 });
+
+Promise.all([db1.asPromise(), db2.asPromise()])
+    .then(() => {
+        console.log("All databases connected!");
+        app.listen(port, () => {
+            console.log(`Server running on port ${port}`);
+        });
+    })
+    .catch((err) => {
+        console.error("Failed to connect to databases:", err.message);
+        process.exit(1);
+    });
 
 module.exports = {
     client, 
