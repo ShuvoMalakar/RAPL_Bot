@@ -52,7 +52,7 @@ const startBot = async () => {
 startBot();
 
 // Database Connection
-Promise.all([db1.asPromise(), db2.asPromise()])
+Promise.all([db1.asPromise(), db2.asPromise(), startBot])
     .then(() => {
         console.log("All databases connected!");
         app.listen(port, () => {
