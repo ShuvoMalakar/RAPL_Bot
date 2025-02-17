@@ -82,11 +82,13 @@ const HandlesWithoutRecordingLinks = async (hour) => {
                     .map(entry => entry.handle); // Extract only the handle names
 
                 if (handlesWithoutLinks.length > 0) {
+                    // Calculate submitDeadline by adding 2 days to the tfc date
+                    const submitDeadline = moment(tfc.date).add(2, 'days').toDate();
                     // Add handles without links to the main array
                     allHandlesWithoutLinks.push({
                         tfcName: tfc.name,
                         contestId: tfc.contestId,
-                        submitDeadline: tfc.date,
+                        submitDeadline: submitDeadline,
                         handles: handlesWithoutLinks,
                     });
                 }
@@ -101,6 +103,14 @@ const HandlesWithoutRecordingLinks = async (hour) => {
     }
 };
 
-const RecordingLinksRem = async () =>{
+const RecordingLinksRem = async () => {
+    try {
+        // Call the HandlesWithoutRecordingLinks function with an appropriate hour value
+        const allHandles = await HandlesWithoutRecordingLinks(50); // You can change 5 to any value for the hour
+        console.log('Handles without recording links:', allHandles);
+    } catch (error) {
+        console.error('❌ Error in RecordingLinksRem:', error.message);
+    }
+};
 
-}
+module.exports = {RecordingLinksRem};
