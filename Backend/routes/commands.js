@@ -57,10 +57,10 @@ async function processCommands(message) {
         await handleCfhandleCommand(message);
     }
     else if(message.channel.id == tfcControllerId){
-        if (!message.content.startsWith('!uptfc')){
+        /*/if (!message.content.startsWith('!uptfc')){
             console.log('Wrong command.');
             return;
-        } 
+        } */
         await handletfcCommand(message);
     }
     else{
