@@ -113,7 +113,7 @@ app.post('/contests-reminders', async (req, res) => {
         await tfc5DayReminders(process.env.CHANNEL_ID, client, EmbedBuilder);
         await updateTFCDateFromVJContest();
         ///findHandlesWithoutRecordingLinks();
-        RecordingLinksRem();
+        RecordingLinksRem(process.env.TFC_CHANNEL, client, EmbedBuilder);
         res.status(200).send('Contest reminders sent successfully.');
     } catch (error) {
         console.error('Error sending contest reminders:', error.message);

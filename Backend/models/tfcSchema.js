@@ -40,6 +40,26 @@ const TFCSchema = new mongoose.Schema({
         type: Boolean,
         default: false 
     },
+    _1h: {
+        type: Boolean,
+        default: false 
+    },
+    _3h: {
+        type: Boolean,
+        default: false 
+    },
+    _24h: {
+        type: Boolean,
+        default: false 
+    },
+    _42h: {
+        type: Boolean,
+        default: false 
+    },
+    _48h: {
+        type: Boolean,
+        default: false 
+    },
 });
 
 const TFC = db1.model('TFC', TFCSchema);

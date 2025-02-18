@@ -51,14 +51,17 @@ const updateTFCDateFromVJContest = async () => {
                 { number: tfc.contestId },
                 { startTime: 1} // Select only startTime
             );
+            
 
             if (vjContest?.startTime) {
-                // Update only if the date is different
                 await TFC.updateOne(
-                    { name: tfc.name}, // Update only if different
-                    { $set: { date: vjContest.startTime } }
+                    { name: tfc.name}, 
+                    { $set:{ 
+                            date: vjContest.startTime,
+                        }
+                    }
                 );
-
+            
                 console.log(`✅ Updated TFC: ${tfc.name}, New Date: ${vjContest.startTime}`);
             } else {
                 console.log(`⚠️ No matching vjContest found for TFC: ${tfc.name} (Contest ID: ${tfc.contestId})`);
@@ -265,6 +268,7 @@ async function handletfcCommand(message) {
         await updateTFCid(message);
     }
     else{
+        message.channel.send('Wrong Command\nUsage:\n `!uptfc <TFC-1> <dd/mm/yyyy> <hh:mmAM/PM>` `!uptfc <TFC-1> <contestid>`');
         console.log('Wrong Command.');
     };
 
