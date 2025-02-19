@@ -127,7 +127,7 @@ const RecordingLinksRem = async (desiredChannelId, client, EmbedBuilder) => {
             console.log(`Sent ${tfc.tfcName} recording reminders.`);
             console.log('Handles without recording links:', tfc.handles);
         }
-        allHandles = await HandlesWithoutRecordingLinks(3, _3hRem);
+        allHandles = await HandlesWithoutRecordingLinks(4, _3hRem);
         for(const tfc of allHandles){
             const result = await mergeUsers(tfc);
             await TFC.updateOne(
