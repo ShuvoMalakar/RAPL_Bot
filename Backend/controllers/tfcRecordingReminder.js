@@ -123,7 +123,7 @@ const RecordingLinksRem = async (desiredChannelId, client, EmbedBuilder) => {
                 { name: tfc.tfcName }, // Filter by contes
                 { $set: { _1h: true, _3h: true, _24h: true, _42h: true } }
             );
-            await channel.send(`${result.headline}**Hey Lazy people! Attention please! Did you commited any suspicious activity on ${tfc.tfcName}🤔?**\n\n${result.recipients}.\n\n${result.updatetime}`);
+            await channel.send(`${result.headline}**Hey Lazy people! Attention please! Did you commited any suspicious activity on ${tfc.tfcName}🤔?**\n\n${result.recipients}.\n\n${result.updatetime}@everyone`);
             console.log(`Sent ${tfc.tfcName} recording reminders.`);
             console.log('Handles without recording links:', tfc.handles);
         }
@@ -134,7 +134,7 @@ const RecordingLinksRem = async (desiredChannelId, client, EmbedBuilder) => {
                 { name: tfc.tfcName }, // Filter by contes
                 { $set: {_3h: true, _24h: true, _42h: true } }
             );
-            await channel.send(`${result.headline}${result.recipients}.\n\n${result.updatetime}`);
+            await channel.send(`${result.headline}${result.recipients}.\n\n${result.updatetime}\n@everyone`);
             console.log(`Sent ${tfc.tfcName} recording reminders.`);
             console.log('Handles without recording links:', tfc.handles);
         }
@@ -145,7 +145,7 @@ const RecordingLinksRem = async (desiredChannelId, client, EmbedBuilder) => {
                 { name: tfc.tfcName }, // Filter by contes
                 { $set: {_24h: true, _42h: true } }
             );
-            await channel.send(`${result.headline}${result.recipients}.\n\n${result.updatetime}`);
+            await channel.send(`${result.headline}${result.recipients}.\n\n${result.updatetime}\n@everyone`);
             console.log(`Sent ${tfc.tfcName} recording reminders.`);
             console.log('Handles without recording links:', tfc.handles);
         }
@@ -156,7 +156,7 @@ const RecordingLinksRem = async (desiredChannelId, client, EmbedBuilder) => {
                 { name: tfc.tfcName }, // Filter by contes
                 { $set: {_42h: true } }
             );
-            await channel.send(`${result.headline}${result.updatetime}`);
+            await channel.send(`${result.headline}${result.updatetime}\n@everyone`);
             console.log(`Sent ${tfc.tfcName} recording reminders.`);
             console.log('Handles without recording links:', tfc.handles);
         }
@@ -167,7 +167,7 @@ const RecordingLinksRem = async (desiredChannelId, client, EmbedBuilder) => {
                 { name: tfc.tfcName }, // Filter by contes
                 { $set: {_1h: true, _3h: true, _24h: true, _42h: true, _48h: true } }
             );
-            await channel.send(`TFC performance suspension:\n${result.recipients} within the deadline. Your  ${tfc.tfcName} performance has been suspended.\n`);
+            await channel.send(`TFC performance suspension:\n${result.recipients} within the deadline. Your  ${tfc.tfcName} performance has been suspended.\n@everyone`);
             console.log(`Sent ${tfc.tfcName} recording reminders.`);
             console.log('Handles without recording links:', tfc.handles);
         }
