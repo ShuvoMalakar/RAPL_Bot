@@ -90,8 +90,8 @@ async function mergeUsers(tfc) {
         }
 
         const headline = `Reminder for ${tfc.tfcName} recording:\n`;
-        const recipients = `\`${tfc.handles.join(", ")}\`\nyou didn't submitted your ${tfc.tfcName} recording link`;
-        const updatetime = `Please submit your ${tfc.tfcName} recording ink (accessible by anyone) within \`${remainingTimeString}\`otherwise your TFC performance will be suspended.\nDeadline: \`${deadline.format('DD MMM YY, hh:mm A')}\`\nLink: https://rapl.netlify.app/profile`;
+        const recipients = `**${tfc.handles.join(", ")}** you haven't submitted your **${tfc.tfcName}** recording link`;
+        const updatetime = `Please submit your ${tfc.tfcName} recording ink (***accessible by anyone***) within **${remainingTimeString}**otherwise your TFC performance will be suspended.\nDeadline: ***${deadline.format('DD MMM YYYY, hh:mm A')}***\nLink: https://rapl.netlify.app/profile`;
 
         return {headline, recipients, updatetime};
         
@@ -123,7 +123,7 @@ const RecordingLinksRem = async (desiredChannelId, client, EmbedBuilder) => {
                 { name: tfc.tfcName }, // Filter by contes
                 { $set: { _1h: true, _3h: true, _24h: true, _42h: true } }
             );
-            await channel.send(`${result.headline}**Hey Lazy people! Attention please! Did you commited any suspicious activity on ${tfc.tfcName}🤔?**\n\n${result.recipients}.\n\n${result.updatetime}@everyone`);
+            await channel.send(`${result.headline}**Hey Lazy people! Attention please! Have you commited any suspicious activity on ${tfc.tfcName}🤔?**\n\n${result.recipients}.\n\n${result.updatetime}\n@everyone`);
             console.log(`Sent ${tfc.tfcName} recording reminders.`);
             console.log('Handles without recording links:', tfc.handles);
         }
