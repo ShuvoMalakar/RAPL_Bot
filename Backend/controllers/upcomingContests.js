@@ -2,27 +2,13 @@ const moment = require('moment-timezone');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const mongoose = require('mongoose');
-const upcomingContest = require('../models/upcomingContests'); // MongoDB model
-//const {client, codechef_timezone} = require('../index');
-
+const upcomingContest = require('../models/upcomingContests');
 const puppeteer = require('puppeteer');
-
 
 async function fetchUpcomingCodechefContests() {
     let browser;
     try {
-        // Detect system timezone dynamically
-        ///const systemTimezone = moment.tz.guess();
-        // Get the current time in IST
         const now = moment().tz('UTC');
-        // For local sewver
-        /*browser = await puppeteer.launch({
-            executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-            args: ['--no-sandbox', '--disable-setuid-sandbox'], // Required for running in a server environment
-
-            ///executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',  // Path to Chromium
-            headless: true,
-        });*/
 
         browser = await puppeteer.launch({ 
             ///executablePath:'/opt/render/.cache/puppeteer/chrome/linux-133.0.6943.53/chrome-linux64/chrome',
@@ -105,7 +91,6 @@ async function fetchUpcomingCodeforcesContests() {
         const contests = response.data.result
             .filter(contest => contest.phase === "BEFORE")  // Only upcoming contests
             .map(contest => {
-                // Convert duration from seconds to hours and minutes
                 const durationSeconds = contest.durationSeconds;
                 const durationHours = Math.floor(durationSeconds / 3600);
                 const durationMinutes = Math.floor((durationSeconds % 3600) / 60);
@@ -113,7 +98,7 @@ async function fetchUpcomingCodeforcesContests() {
 
                 return{
                     name: contest.name,
-                    startTime: moment.unix(contest.startTimeSeconds).toDate(),  // Convert timestamp to Date
+                    startTime: moment.unix(contest.startTimeSeconds).toDate(),
                     link: `https://codeforces.com/contests/${contest.id}`,
                     duration: duration,
                 }
@@ -203,12 +188,6 @@ async function saveAtcoderContestsToDB() {
         } catch (error) {
             return { error: error.message };
         }
-        /*if (!existing) {
-            await upcomingContest.create(contest);
-            console.log(`✅ Stored: ${contest.name}`);
-        } else {
-            console.log(`🔹 Already exists: ${contest.name}`);
-        }*/
     }
 }
 
@@ -252,12 +231,6 @@ async function saveCodechefContestsToDB() {
         } catch (error) {
             return { error: error.message };
         }
-        /*if (!existing) {
-            await upcomingContest.create(contest);
-            console.log(`✅ Stored: ${contest.name}`);
-        } else {
-            console.log(`🔹 Already exists: ${contest.name}`);
-        }*/
     }
 }
 
@@ -298,12 +271,6 @@ async function saveCodeforcesContestsToDB() {
         } catch (error) {
             return { error: error.message };
         }
-        /*if (!existing) {
-            await upcomingContest.create(contest);
-            console.log(`✅ Stored: ${contest.name}`);
-        } else {
-            console.log(`🔹 Already exists: ${contest.name}`);
-        }*/
     }
 }
 
@@ -355,11 +322,6 @@ async function logUpcomingContests(desiredChannelId, client, EmbedBuilder) {
         const formattedTime = moment(contest.startTime)
             .tz('Asia/Dhaka')
             .format('DD/MM/YY h:mmA');
-
-        /*console.log(`Name: ${contest.name}`);
-        console.log(`Start Time (BST): ${formattedTime}`);
-        console.log(`Link: ${contest.link}`);
-        console.log(`----------------------------------------`);*/
 
         discordMessage += `[${contest.name}](${contest.link})|${formattedTime}\n`;
     });

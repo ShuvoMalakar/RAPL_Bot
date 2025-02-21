@@ -11,12 +11,11 @@ const { send5DayReminders, send2DayReminders, send1DayReminders, send2hoursRemin
 const { tfc5DayReminders, tfc2DayReminders,tfc1DayReminders, tfc2hoursReminders,  tfc20minutesReminders } =require('./controllers/tfcReminder');
 const {updateTFCDateFromVJContest, findHandlesWithoutRecordingLinks} = require('./controllers/tfcController');
 const {RecordingLinksRem} = require('./controllers/tfcRecordingReminder');
-///require('dotenv').config();
+const startBot = require('./config/bot');
 
 const app = express();
-const port = process.env.PORT || 8080; // Use Render's PORT environment variable or fallback to 8080
+const port = process.env.PORT || 8080;
 
-// Ensure required environment variables are set
 const requiredEnvVars = [
     'SERVER_ID', 'CHANNEL_ID', 'BOT_TOKEN', 'REMINDER_CHANNEL_ID',
     'CODECHEF_TIMEZONE', 'MONGO_URI_USER', 'TFC_CHANNEL', 'TFC_CONTROLLER_CHANNEL'
@@ -42,30 +41,7 @@ client.on('messageCreate', (message) => {
     processCommands(message);
 });
 
-const startBot = async () => {
-    try {
-        await client.login(process.env.BOT_TOKEN);
-        console.log('Discord bot logged in successfully!');
-    } catch (error) {
-        console.error('Error logging in to Discord:', error.message);
-        process.exit(1);
-    }
-};
-
-startBot();
-
-/*startBot().then(() => {
-    return Promise.all([db1.asPromise(), db2.asPromise()]);
-}).then(() => {
-    console.log("✅ All databases connected!");
-    app.listen(port, () => {
-        console.log(`🚀 Server running on port ${port}`);
-    });
-}).catch((err) => {
-    console.error("❌ Error initializing app:", err.message);
-    process.exit(1); // Stop the app if anything fails
-});*/
-
+startBot(client);
 
 // Database Connection
 Promise.all([db1.asPromise(), db2.asPromise(), startBot])
@@ -80,15 +56,12 @@ Promise.all([db1.asPromise(), db2.asPromise(), startBot])
         process.exit(1);
     });
 
-// Express Routes
 app.get('/', (req, res) => {
-    ///startBot();
     res.send('Hello, your bot is up and running!');
 });
 
 app.post('/upcoming-contests', async (req, res) => {
     try {
-        ///await startBot();
         await saveContestsToDB();
         await logUpcomingContests(process.env.CHANNEL_ID, client, EmbedBuilder);
         res.status(200).send('Upcoming contests updated successfully.');
@@ -100,7 +73,6 @@ app.post('/upcoming-contests', async (req, res) => {
 
 app.post('/contests-reminders', async (req, res) => {
     try {
-        ///await startBot();
         await send20minutesReminders(process.env.REMINDER_CHANNEL_ID, client, EmbedBuilder);
         await send2hoursReminders(process.env.REMINDER_CHANNEL_ID, client, EmbedBuilder);
         await send1DayReminders(process.env.REMINDER_CHANNEL_ID, client, EmbedBuilder);
