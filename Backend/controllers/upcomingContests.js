@@ -189,7 +189,7 @@ async function saveAtcoderContestsToDB() {
     for (const contest of contests) {
         try{  
             await upcomingContest.findOneAndUpdate(
-                { name: contest.name, OJ: "Atcoder", },
+                { name: contest.link, OJ: "Atcoder", },
                 {
                     name: contest.name,
                     startTime: contest.startTime,
@@ -238,7 +238,7 @@ async function saveCodechefContestsToDB() {
     for (const contest of contests) {
         try{  
             await upcomingContest.findOneAndUpdate(
-                { name: contest.name, OJ: "Codechef", },
+                { name: contest.link, OJ: "Codechef", },
                 {
                     name: contest.name,
                     startTime: contest.startTime,
@@ -284,7 +284,7 @@ async function saveCodeforcesContestsToDB() {
     for (const contest of contests) {
         try{  
             await upcomingContest.findOneAndUpdate(
-                { name: contest.name, OJ: "Codeforces", },
+                { name: contest.link, OJ: "Codeforces", },
                 {
                     name: contest.name,
                     startTime: contest.startTime,
