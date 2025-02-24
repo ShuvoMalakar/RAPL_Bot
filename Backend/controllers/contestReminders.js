@@ -57,7 +57,7 @@ async function send5DayReminders(desiredChannelId, client, EmbedBuilder) {
 
             // Directly update the _5dReminder field in the database
             try {
-                await upcomingContest.updateOne(
+                await upcomingContest.updateMany(
                     { link: contest.link }, // Filter by contest ID
                     { $set: { _5dReminder: true } } // Set _5dReminder to true
                 );
@@ -125,7 +125,7 @@ async function send2DayReminders(desiredChannelId, client, EmbedBuilder) {
 
             // Directly update the _5dReminder field in the database
             try {
-                await upcomingContest.updateOne(
+                await upcomingContest.updateMany(
                     { link: contest.link }, // Filter by contest ID
                     { 
                         $set: { 
@@ -198,7 +198,7 @@ async function send1DayReminders(desiredChannelId, client, EmbedBuilder) {
 
             // Directly update the _1dReminder field in the database
             try {
-                await upcomingContest.updateOne(
+                await upcomingContest.updateMany(
                     { link: contest.link }, // Filter by contest ID
                     { 
                         $set: { 
@@ -272,7 +272,7 @@ async function send2hoursReminders(desiredChannelId, client, EmbedBuilder) {
 
             // Directly update the _1dReminder field in the database
             try {
-                await upcomingContest.updateOne(
+                await upcomingContest.updateMany(
                     { link: contest.link }, // Filter by contest ID
                     { 
                         $set: { 
@@ -347,7 +347,7 @@ async function send20minutesReminders(desiredChannelId, client, EmbedBuilder) {
 
             // Directly update the _1dReminder field in the database
             try {
-                await upcomingContest.updateOne(
+                await upcomingContest.updateMany(
                     { link: contest.link }, // Filter by contest ID
                     { 
                         $set: { 

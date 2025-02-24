@@ -14,7 +14,8 @@ const upcomingContestSchema = new mongoose.Schema({
     },
     link: {
         type: String,
-        required: true 
+        required: true,
+        unique: true,
     },
     duration: {
         type: String, 
