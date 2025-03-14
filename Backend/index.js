@@ -12,6 +12,7 @@ const { tfc5DayReminders, tfc2DayReminders,tfc1DayReminders, tfc2hoursReminders,
 const {updateTFCDateFromVJContest, findHandlesWithoutRecordingLinks} = require('./controllers/tfcController');
 const {RecordingLinksRem} = require('./controllers/tfcRecordingReminder');
 const startBot = require('./config/bot');
+const {fetchUserInfo, fetchMentionedUsers, mentionUsers,} = require('./controllers/usersController');
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -36,9 +37,13 @@ client.once('ready', () => {
     console.log(`Logged in as ${client.user.tag}`);
 });
 
-client.on('messageCreate', (message) => {
+client.on('messageCreate', async (message) => {
     if (message.author.bot) return; // Ignore messages from bots
     processCommands(message);
+    ///fetchUserInfo(message);
+    ///fetchMentionedUsers(message);
+    ///mentionUsers(message);
+
 });
 
 startBot(client);
@@ -85,7 +90,9 @@ app.post('/contests-reminders', async (req, res) => {
         await tfc5DayReminders(process.env.CHANNEL_ID, client, EmbedBuilder);
         await updateTFCDateFromVJContest();
         ///findHandlesWithoutRecordingLinks();
+        //await fetchServerUsers(client, process.env.SERVER_ID);
         RecordingLinksRem(process.env.TFC_CHANNEL, client, EmbedBuilder);
+        
         res.status(200).send('Contest reminders sent successfully.');
     } catch (error) {
         console.error('Error sending contest reminders:', error.message);

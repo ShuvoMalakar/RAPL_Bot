@@ -42,8 +42,120 @@ const fetchAndLogUsers = async () => {
     }
 };
 
+/*const fetchServerUsers = async (client, GUILD_ID) => {
+    try {
+        const guild = await client.guilds.fetch(GUILD_ID);
+        const members = await guild.members.fetch();
+
+        const memberData = members.map(member => ({
+            id: member.id,
+            username: member.user.username,
+            nickname: member.nickname || 'No Nickname'
+        }));
+
+        console.log(memberData); // Logs all member details
+
+    } catch (error) {
+        console.error('Error fetching members:', error);
+    }
+};*/
+
+const fetchUserInfo = async (message) => {
+    try {
+        // Fetch the user as a guild member
+        const member = await message.guild.members.fetch(message.author.id);
+
+        // Log all user info
+        const userInfo = {
+            id: member.id,
+            username: member.user.username,
+            discriminator: member.user.discriminator,
+            globalName: member.user.globalName || 'Not Set',
+            nickname: member.nickname || 'No Nickname',
+            avatar: member.user.displayAvatarURL({ dynamic: true, size: 1024 }),
+            joinedAt: member.joinedAt,
+            createdAt: member.user.createdAt,
+            roles: member.roles.cache.map(role => role.name).join(', '),
+            isBot: member.user.bot
+        };
+
+        console.log(userInfo); // Print user info in console
+
+    } catch (error) {
+        console.error('Error fetching user details:', error);
+    }
+};
+
+const fetchMentionedUsers = async (message) => {
+    const mentionedUsers = message.mentions.users;
+
+    if (mentionedUsers.size === 0) {
+        return message.reply("Please mention at least one user.");
+    }
+
+    try {
+        const userInfoList = [];
+
+        for (const [userId, user] of mentionedUsers) {
+            // Fetch the user as a guild member
+            const member = await message.guild.members.fetch(userId);
+
+            // Create user info object
+            const userInfo = {
+                id: member.id,
+                username: member.user.username,
+                globalName: member.user.globalName || 'Not Set',
+                nickname: member.nickname || 'No Nickname',
+                avatar: member.user.displayAvatarURL({ dynamic: true, size: 1024 }),
+                joinedAt: member.joinedAt,
+                createdAt: member.user.createdAt,
+                roles: member.roles.cache.map(role => role.name).join(', '),
+                isBot: member.user.bot
+            };
+
+            userInfoList.push(userInfo);
+        }
+
+        console.log(userInfoList); // Print user info in console
+        message.reply(`Fetched info for ${userInfoList.length} mentioned users! (Check console)`);
+
+    } catch (error) {
+        console.error('Error fetching user details:', error);
+        message.reply('Failed to fetch user info.');
+    }
+};
+
+const mentionUsers = async (message) => {
+
+    const mentionedUsers = message.mentions.users;
+    if (mentionedUsers.size === 0) {
+        return message.reply("Please mention at least one user.");
+    }
+
+    try {
+        const mentions = [];
+
+        for (const [userId, user] of mentionedUsers) {
+            const member = await message.guild.members.fetch(userId);
+            const nickname = member.nickname || member.user.username; // Use nickname if available
+
+            mentions.push(`<@${member.id}>`); // Bold nickname + real mention
+        }
+
+        const response = `Hello ${mentions.join(', ')}! 👋`; // Combine mentions into message
+
+        message.channel.send(response); // Send message in the same channel
+
+    } catch (error) {
+        console.error('Error mentioning users:', error);
+        message.reply('Failed to mention users.');
+    }
+};
+
 // Call the function to fetch and log users
 module.exports = {
     fetchAndLogUsers,
-
+    fetchUserInfo,
+    fetchMentionedUsers,
+    mentionUsers,
 };
