@@ -91,7 +91,7 @@ async function mergeUsers(tfc) {
 
         const headline = `Reminder for ${tfc.tfcName} recording:\n`;
         const recipients = `**${tfc.handles.join(", ")}** you haven't submitted your **${tfc.tfcName}** recording link`;
-        const updatetime = `Please submit your ${tfc.tfcName} recording ink (***accessible by anyone***) within **${remainingTimeString}**otherwise your TFC performance will be suspended.\nDeadline: ***${deadline.format('DD MMM YYYY, hh:mm A')}***\nLink: https://rapl.netlify.app/profile`;
+        const updatetime = `Please submit your ${tfc.tfcName} recording ink (***accessible by anyone***) within **${remainingTimeString}**otherwise your TFC performance will be suspended.\nDeadline: ***${deadline.format('DD MMM YYYY, hh:mm A')}***\nLink: https://rapl.site/profile`;
 
         return {headline, recipients, updatetime};
         
