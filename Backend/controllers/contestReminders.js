@@ -49,7 +49,7 @@ async function send5DayReminders(desiredChannelId, client, EmbedBuilder) {
                     return;
                 }
                 ///await channel.send(reminderMessage);
-                await channel.send({ content:`📊 Starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
+                await channel.send({ content:`<:Codeforces:EMOJI_ID> Starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
                 console.log("✅ Sent Reminder to Discord successfully!");
             } catch (error) {
                 console.error("❌ Error sending reminder to Discord:", error.message);
@@ -117,7 +117,7 @@ async function send2DayReminders(desiredChannelId, client, EmbedBuilder) {
                     return;
                 }
                 ///await channel.send(reminderMessage);
-                await channel.send({ content: `📊 Starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
+                await channel.send({ content: `<:Codeforces:EMOJI_ID> Starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
                 console.log("✅ Sent Reminder to Discord successfully!");
             } catch (error) {
                 console.error("❌ Error sending reminder to Discord:", error.message);
@@ -190,7 +190,7 @@ async function send1DayReminders(desiredChannelId, client, EmbedBuilder) {
                     return;
                 }
                 ///await channel.send(reminderMessage);
-                await channel.send({ content: `📊 Starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
+                await channel.send({ content: `<:Codeforces:EMOJI_ID> Starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
                 console.log("✅ Sent Reminder to Discord successfully!");
             } catch (error) {
                 console.error("❌ Error sending reminder to Discord:", error.message);
@@ -264,7 +264,7 @@ async function send2hoursReminders(desiredChannelId, client, EmbedBuilder) {
                     return;
                 }
                 ///await channel.send(reminderMessage);
-                await channel.send({ content: `📊 Starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
+                await channel.send({ content: `<:Codeforces:EMOJI_ID> Starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
                 console.log("✅ Sent Reminder to Discord successfully!");
             } catch (error) {
                 console.error("❌ Error sending reminder to Discord:", error.message);
@@ -339,7 +339,7 @@ async function send20minutesReminders(desiredChannelId, client, EmbedBuilder) {
                     return;
                 }
                 ///await channel.send(reminderMessage);
-                await channel.send({ content: `📊 Starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
+                await channel.send({ content: `<:Codeforces:EMOJI_ID> Starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
                 console.log("✅ Sent Reminder to Discord successfully!");
             } catch (error) {
                 console.error("❌ Error sending reminder to Discord:", error.message);
