@@ -49,7 +49,7 @@ async function send5DayReminders(desiredChannelId, client, EmbedBuilder) {
                     return;
                 }
                 ///await channel.send(reminderMessage);
-                await channel.send({ content:`<:Codeforces:Codeforces> Starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
+                await channel.send({ content:`<:Codeforces:1371573936986521620> Starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
                 console.log("✅ Sent Reminder to Discord successfully!");
             } catch (error) {
                 console.error("❌ Error sending reminder to Discord:", error.message);
