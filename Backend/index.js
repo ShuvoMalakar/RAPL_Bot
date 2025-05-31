@@ -13,6 +13,7 @@ const {updateTFCDateFromVJContest, findHandlesWithoutRecordingLinks} = require('
 const {RecordingLinksRem} = require('./controllers/tfcRecordingReminder');
 const startBot = require('./config/bot');
 const {fetchUserInfo, fetchMentionedUsers, mentionUsers,} = require('./controllers/usersController');
+const  {bot_running} = require('./controllers/botRunning');
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -65,6 +66,16 @@ app.get('/', (req, res) => {
     res.send('Hello, your bot is up and running!');
 });
 
+app.post('/eheeee', async (req, res) => {
+    try {
+        await bot_running(process.env.HACK_RAPL_BOT, client, EmbedBuilder);
+        res.status(200).send('Bot is running');
+    } catch (error) {
+        console.error('Error updating upcoming contests:', error.message);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 app.post('/upcoming-contests', async (req, res) => {
     try {
         await saveContestsToDB();
@@ -109,4 +120,5 @@ module.exports = {
     reminderdChannelId: process.env.REMINDER_CHANNEL_ID,
     desiredServerId: process.env.SERVER_ID,
     testChannelId: process.env.CHANNEL_ID,
+    hackId: process.env.HACK_RAPL_BOT,
 };
