@@ -1,15 +1,9 @@
 
 // 🔹 Send contests to Discord
-async function bot_running(desiredChannelId, client, message, EmbedBuilder) {
+async function bot_running(message) {
     try {
-        const channel = await client.channels.fetch(desiredChannelId);
-        if (!channel) {
-            console.error("❌ Could not find the Discord channel.");
-            return; // Stop execution if the channel is not found
-        }
-
-        await channel.send("Bot is still running!");
-        console.log("✅ Sent to Discord successfully!");
+        message.channel.send("I'm still alive!");;
+        console.log("✅ Bot running successfully!");
     } catch (error) {
         console.error("❌ Error sending message to Discord:", error.message);
     }

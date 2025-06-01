@@ -20,7 +20,7 @@ const port = process.env.PORT || 8080;
 
 const requiredEnvVars = [
     'SERVER_ID', 'CHANNEL_ID', 'BOT_TOKEN', 'REMINDER_CHANNEL_ID',
-    'CODECHEF_TIMEZONE', 'MONGO_URI_USER', 'TFC_CHANNEL', 'TFC_CONTROLLER_CHANNEL'
+    'CODECHEF_TIMEZONE', 'MONGO_URI_USER', 'TFC_CHANNEL', 'TFC_CONTROLLER_CHANNEL', 'HACK_RAPL_BOT'
 ];
 
 for (const envVar of requiredEnvVars) {
@@ -66,7 +66,7 @@ app.get('/', (req, res) => {
     res.send('Hello, your bot is up and running!');
 });
 
-app.post('/eheeee', async (req, res) => {
+/*app.post('/eheeee', async (req, res) => {
     try {
         await bot_running(process.env.HACK_RAPL_BOT, client, EmbedBuilder);
         res.status(200).send('Bot is running');
@@ -74,7 +74,7 @@ app.post('/eheeee', async (req, res) => {
         console.error('Error updating upcoming contests:', error.message);
         res.status(500).send('Internal Server Error');
     }
-});
+});*/
 
 app.post('/upcoming-contests', async (req, res) => {
     try {
