@@ -67,6 +67,7 @@ async function processCommands(message) {
         else{
             if(message.content.length > 40 || message.content.includes('\n')){
                 message.channel.send('Invalid command.\nUsage: `!cfhandle <user_handle>`');
+                return;
             }
             await handleCfhandleCommand(message);
         }
