@@ -97,7 +97,7 @@ async function handleCfhandleCommand(message) {
     const result = await getCodeforcesRating(handle);
 
     if (result.error) {
-        message.channel.send(result.error);
+        message.channel.send("Something went wrong");
     } else {
         const response = `
 📊 **Codeforces User Info:**

@@ -64,8 +64,12 @@ async function processCommands(message) {
             }
             return;
         }
-
-        await handleCfhandleCommand(message);
+        else{
+            if(message.content.length > 40 || message.content.includes('\n')){
+                message.channel.send('Invalid command.\nUsage: `!cfhandle <user_handle>`');
+            }
+            await handleCfhandleCommand(message);
+        }
     }
     else if(message.channel.id == tfcControllerId){
         /*/if (!message.content.startsWith('!uptfc')){
