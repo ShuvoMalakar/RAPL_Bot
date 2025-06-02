@@ -66,7 +66,7 @@ async function send5DayReminders(desiredChannelId, client, EmbedBuilder) {
             }
         }
 
-        console.log(`Sent ${contests.length} reminders.`);
+        //console.log(`Sent ${contests.length} reminders.`);
     } catch (error) {
         console.error('Error sending reminders:', error.message);
     }
@@ -139,7 +139,7 @@ async function send2DayReminders(desiredChannelId, client, EmbedBuilder) {
             }
         }
 
-        console.log(`Sent ${contests.length} reminders.`);
+        //console.log(`Sent ${contests.length} reminders.`);
     } catch (error) {
         console.error('Error sending reminders:', error.message);
     }
@@ -213,7 +213,7 @@ async function send1DayReminders(desiredChannelId, client, EmbedBuilder) {
             }
         }
 
-        console.log(`Sent ${contests.length} reminders.`);
+        //console.log(`Sent ${contests.length} reminders.`);
     } catch (error) {
         console.error('Error sending reminders:', error.message);
     }
@@ -288,7 +288,7 @@ async function send2hoursReminders(desiredChannelId, client, EmbedBuilder) {
             }
         }
 
-        console.log(`Sent ${contests.length} reminders.`);
+        //console.log(`Sent ${contests.length} reminders.`);
     } catch (error) {
         console.error('Error sending reminders:', error.message);
     }
@@ -364,7 +364,7 @@ async function send20minutesReminders(desiredChannelId, client, EmbedBuilder) {
             }
         }
 
-        console.log(`Sent ${contests.length} reminders.`);
+        //console.log(`Sent ${contests.length} reminders.`);
     } catch (error) {
         console.error('Error sending reminders:', error.message);
     }

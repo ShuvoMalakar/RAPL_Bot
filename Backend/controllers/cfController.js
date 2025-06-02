@@ -89,7 +89,7 @@ async function handleCfhandleCommand(message) {
     const args = message.content.split(' ');
     if (args.length < 2) {
         message.channel.send('Usage: `!cfhandle <user_handle>`');
-        console.log('Message sent to the desired channel with command error.');
+        //console.log('Message sent to the desired channel with command error.');
         return;
     }
 
@@ -113,7 +113,7 @@ async function handleCfhandleCommand(message) {
         
 
 
-        console.log('Message sent to the desired channel.');
+        //console.log('Message sent to the desired channel.');
     }
 }
 

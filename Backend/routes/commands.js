@@ -49,7 +49,7 @@ async function getCodeforcesRating(handle) {
 // Command handler for `cfhandle`
 async function processCommands(message) {
     if (message.guild.id !== desiredServerId ) {
-        console.log('Not from the desired server.');
+        //console.log('Not from the desired server.');
         return; // Ignore messages from other servers or channels
     }
 
@@ -59,7 +59,7 @@ async function processCommands(message) {
                 try{
                     message.channel.send('This command is not recognized in this channel.');
                 } catch (error) {
-                    console.error('Error sending message:', error.message);
+                    //console.error('Error sending message:', error.message);
                 }
             }
             return;
@@ -78,7 +78,7 @@ async function processCommands(message) {
         bot_running(message);
     }
     else{
-        console.log('Not from the desired channel.');
+        //console.log('Not from the desired channel.');
         return;
     };
 

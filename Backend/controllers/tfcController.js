@@ -104,13 +104,13 @@ const parseTFCDateTime = (tfcName, dateStr, timeStr) => {
     }
 
     // Log the parsed time in Asia/Dhaka
-    console.log("Parsed Date (Asia/Dhaka):", parsedDateTime.format("YYYY-MM-DD HH:mm:ss"));
+    //console.log("Parsed Date (Asia/Dhaka):", parsedDateTime.format("YYYY-MM-DD HH:mm:ss"));
 
     // Convert to UTC
     const utcDateTime = parsedDateTime.utc();
 
     // Log the converted UTC time
-    console.log("Converted to UTC:", utcDateTime.format("YYYY-MM-DD HH:mm:ss"));
+    //console.log("Converted to UTC:", utcDateTime.format("YYYY-MM-DD HH:mm:ss"));
 
     return utcDateTime.toDate();
 
