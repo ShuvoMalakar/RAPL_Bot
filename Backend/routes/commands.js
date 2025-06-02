@@ -54,7 +54,16 @@ async function processCommands(message) {
     }
 
     if (message.channel.id == desiredChannelId){
-        if (!message.content.startsWith('!cfhandle')) return;
+        if (!message.content.startsWith('!cfhandle')){
+            if(message.content.startsWith('!')){
+                try{
+                    message.channel.send('This command is not recognized in this channel.');
+                } catch (error) {
+                    console.error('Error sending message:', error.message);
+                }
+            }
+            return;
+        }
 
         await handleCfhandleCommand(message);
     }
