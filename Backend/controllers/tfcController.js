@@ -62,9 +62,9 @@ const updateTFCDateFromVJContest = async () => {
                     }
                 );
             
-                console.log(`✅ Updated TFC: ${tfc.name}, New Date: ${vjContest.startTime}`);
+                //console.log(`✅ Updated TFC: ${tfc.name}, New Date: ${vjContest.startTime}`);
             } else {
-                console.log(`⚠️ No matching vjContest found for TFC: ${tfc.name} (Contest ID: ${tfc.contestId})`);
+                //console.log(`⚠️ No matching vjContest found for TFC: ${tfc.name} (Contest ID: ${tfc.contestId})`);
             }
         }
     } catch (error) {
