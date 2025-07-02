@@ -64,7 +64,7 @@ async function tfc5DayReminders(desiredChannelId, client, EmbedBuilder) {
             }
         }
 
-        console.log(`Sent ${contests.length} reminders.`);
+        //console.log(`Sent ${contests.length} reminders.`);
     } catch (error) {
         console.error('Error sending reminders:', error.message);
     }
@@ -134,7 +134,7 @@ async function tfc2DayReminders(desiredChannelId, client, EmbedBuilder) {
             }
         }
 
-        console.log(`Sent ${contests.length} reminders.`);
+        //console.log(`Sent ${contests.length} reminders.`);
     } catch (error) {
         console.error('Error sending reminders:', error.message);
     }
@@ -205,7 +205,7 @@ for (const contest of contests) {
             }
         }
 
-        console.log(`Sent ${contests.length} reminders.`);
+        //console.log(`Sent ${contests.length} reminders.`);
     } catch (error) {
         console.error('Error sending reminders:', error.message);
     }
@@ -277,7 +277,7 @@ async function tfc2hoursReminders(desiredChannelId, client, EmbedBuilder) {
             }
         }
 
-        console.log(`Sent ${contests.length} reminders.`);
+       // console.log(`Sent ${contests.length} reminders.`);
     } catch (error) {
         console.error('Error sending reminders:', error.message);
     }
@@ -351,7 +351,7 @@ async function tfc20minutesReminders(desiredChannelId, client, EmbedBuilder) {
             }
         }
 
-        console.log(`Sent ${contests.length} reminders.`);
+        ///console.log(`Sent ${contests.length} reminders.`);
     } catch (error) {
         console.error('Error sending reminders:', error.message);
     }

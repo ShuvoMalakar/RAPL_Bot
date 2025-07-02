@@ -89,8 +89,8 @@ const fetchLast10TFC = async () => {
 
 // Function to validate and parse date-time
 const parseTFCDateTime = (tfcName, dateStr, timeStr) => {
-    if (!/^TFC-\d+$/.test(tfcName)) {
-        throw new Error("Invalid TFC name format. Expected format: TFC-01 or TFC-1");
+    if (!/^TFC_\d+$/.test(tfcName)) {
+        throw new Error("Invalid TFC name format. Expected format: TFC_01 or TFC_1");
     }
 
     // Combine date and time
