@@ -183,8 +183,8 @@ async function updateTFC(message){
 }
 // Function to validate and parse date-time
 const parseTFCid = (tfcName, tfcId) => {
-    if (!/^TFC-\d+$/.test(tfcName)) {
-        throw new Error("Invalid TFC name format. Expected format: TFC-01 or TFC-1");
+    if (!/^TFC_\d+$/.test(tfcName)) {
+        throw new Error("Invalid TFC name format. Expected format: TFC_01 or TFC_1");
     }
 
     if (/^\d{6}$/.test(tfcId)) {
@@ -219,7 +219,7 @@ const upsertTFCid = async (tfcName, tfcId) => {
 async function updateTFCid(message){
     const args = await message.content.split(' ');
     if (args.length < 3) {
-        message.channel.send('Usage: `!uptfc <TFC-1> <contestid>`');
+        message.channel.send('Usage: `!uptfc <TFC_1> <contestid>`');
         console.log('Message sent to the desired channel with command error.');
         return;
     }
@@ -268,7 +268,7 @@ async function handletfcCommand(message) {
         await updateTFCid(message);
     }
     else{
-        message.channel.send('Wrong Command\nUsage:\n `!uptfc <TFC-1> <dd/mm/yyyy> <hh:mmAM/PM>` `!uptfc <TFC-1> <contestid>`');
+        message.channel.send('Wrong Command\nUsage:\n `!uptfc <TFC_1> <dd/mm/yyyy> <hh:mmAM/PM>` `!uptfc <TFC_1> <contestid>`');
         console.log('Wrong Command.');
     };
 
