@@ -4,7 +4,7 @@ const cheerio = require('cheerio');
 const mongoose = require('mongoose');
 const upcomingContest = require('../models/upcomingContests');
 const puppeteer = require('puppeteer');
-
+/*
 async function fetchUpcomingCodechefContests() {
     let browser;
     try {
@@ -76,6 +76,37 @@ async function fetchUpcomingCodechefContests() {
         if (browser) {
             await browser.close();
         }
+    }
+}
+*/
+
+
+async function fetchUpcomingCodechefContests() {
+    try {
+        ///const now = moment().tz('UTC');
+
+        const response = await axios.get("https://www.codechef.com/api/list/contests/future");
+        //console.log(response.data.contests);
+
+        const contests = response.data?.contests || [];
+
+        const upcomingContests = contests
+            .map(contest => {
+                const startTimeUTC = moment.utc(contest.contest_start_date_iso);
+                
+                return {
+                    name: contest.contest_name,
+                    link: `https://www.codechef.com/${contest.contest_code}`,
+                    startTime: startTimeUTC.toDate(), // Start time as JavaScript Date object
+                    duration: contest.contest_duration, // Duration string (e.g., "02:00")
+                };
+            })
+            //.filter(contest => moment(contest.startTime).isAfter(now)); // Filter future contests
+
+        return upcomingContests;
+    } catch (error) {
+        console.error("Error fetching CodeChef contests:", error.message);
+        return [];
     }
 }
 
