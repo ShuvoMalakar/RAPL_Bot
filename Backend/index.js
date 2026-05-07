@@ -50,7 +50,7 @@ client.on('messageCreate', async (message) => {
 startBot(client);
 
 // Database Connection
-Promise.all([db1.asPromise(), db2.asPromise(), startBot])
+Promise.all([db1.asPromise(), startBot])
     .then(() => {
         console.log("All databases connected!");
         app.listen(port, () => {

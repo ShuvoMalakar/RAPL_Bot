@@ -25,6 +25,6 @@ const CodeforcesUserSchema = new mongoose.Schema({
         default: "Unknown" 
     },
 });
-CodeforcesUser = db1.model("CodeforcesUser", CodeforcesUserSchema);
+const CodeforcesUser = db1.model("CodeforcesUser", CodeforcesUserSchema);
 
 module.exports = CodeforcesUser;

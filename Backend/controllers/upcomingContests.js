@@ -3,7 +3,6 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const mongoose = require('mongoose');
 const upcomingContest = require('../models/upcomingContests');
-const puppeteer = require('puppeteer');
 /*
 async function fetchUpcomingCodechefContests() {
     let browser;

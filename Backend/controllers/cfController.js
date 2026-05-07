@@ -55,7 +55,10 @@ exports.createDiscordMessage = (user) => {
 
 // Function to fetch Codeforces rating
 async function getCodeforcesRating(handle) {
-    const url = `https://codeforces.com/api/user.info?handles=${handle}`;
+    if (!/^[a-zA-Z0-9_.-]+$/.test(handle)) {
+        return { error: 'Invalid handle format' };
+    }
+    const url = `https://codeforces.com/api/user.info?handles=${encodeURIComponent(handle)}`;
     try {
         const response = await axios.get(url);
         const data = response.data;

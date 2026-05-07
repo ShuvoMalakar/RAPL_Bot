@@ -34,6 +34,6 @@ const vjContestsSchema = new Schema({
     }]
 }, {timestamps: true})
 
-vjContests = db2.model(`vjcontest`, vjContestsSchema)
+const vjContests = db2.model('vjcontest', vjContestsSchema)
 
 module.exports = vjContests;

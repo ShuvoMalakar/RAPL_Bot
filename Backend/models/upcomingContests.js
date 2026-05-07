@@ -47,6 +47,6 @@ const upcomingContestSchema = new mongoose.Schema({
     },
 });
 
-upcomingContest = db1.model('upcomingContest', upcomingContestSchema);
+const upcomingContest = db1.model('upcomingContest', upcomingContestSchema);
 
 module.exports = upcomingContest;

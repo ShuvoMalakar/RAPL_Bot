@@ -33,10 +33,7 @@ const connectDB2 = async () => {
 const mongoose = require("mongoose");
 
 // Create the first database connection
-const db1 = mongoose.createConnection(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-});
+const db1 = mongoose.createConnection(process.env.MONGO_URI);
 
 db1.on("connected", () => {
     console.log("✅ Database 1 connected!");
@@ -48,10 +45,7 @@ db1.on("error", (err) => {
 });
 
 // Create the second database connection
-const db2 = mongoose.createConnection(process.env.MONGO_URI_USER, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-});
+const db2 = mongoose.createConnection(process.env.MONGO_URI_USER);
 
 db2.on("connected", () => {
     console.log("✅ User Database connected!");
