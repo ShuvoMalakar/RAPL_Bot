@@ -33,7 +33,7 @@ for (const envVar of requiredEnvVars) {
 // Discord Bot Setup
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 
-client.once('ready', () => {
+client.once('clientReady', () => {
     console.log('Discord bot is online!');
     console.log(`Logged in as ${client.user.tag}`);
 });
@@ -50,7 +50,7 @@ client.on('messageCreate', async (message) => {
 startBot(client);
 
 // Database Connection
-Promise.all([db1.asPromise(), startBot])
+Promise.all([db1.asPromise(), db2.asPromise(), startBot])
     .then(() => {
         console.log("All databases connected!");
         app.listen(port, () => {
