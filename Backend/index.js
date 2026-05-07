@@ -11,6 +11,7 @@ const { send5DayReminders, send2DayReminders, send1DayReminders, send2hoursRemin
 const { tfc5DayReminders, tfc2DayReminders,tfc1DayReminders, tfc2hoursReminders,  tfc20minutesReminders } =require('./controllers/tfcReminder');
 const {updateTFCDateFromVJContest, findHandlesWithoutRecordingLinks} = require('./controllers/tfcController');
 const {RecordingLinksRem} = require('./controllers/tfcRecordingReminder');
+const {sendTfcAttendanceInfo} = require('./controllers/tfcAttendance');
 const startBot = require('./config/bot');
 const {fetchUserInfo, fetchMentionedUsers, mentionUsers,} = require('./controllers/usersController');
 const  {bot_running} = require('./controllers/botRunning');
@@ -36,6 +37,7 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBit
 client.once('clientReady', () => {
     console.log('Discord bot is online!');
     console.log(`Logged in as ${client.user.tag}`);
+    //sendTfcAttendanceInfo(client);
 });
 
 client.on('messageCreate', async (message) => {
