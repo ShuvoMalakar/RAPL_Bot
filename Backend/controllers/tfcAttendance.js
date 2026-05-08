@@ -12,7 +12,8 @@ async function sendTfcAttendanceInfo(client) {
             return;
         }
 
-        const message = `While entering the TFC arena, put your Student Id, Vjudge Handle & Room No. in this format:
+        //const message = '@everyone\n**No need to mention the leaving time if you send the message at the time of leaving.**';
+        /*const message = `While entering the TFC arena, put your Student Id, Vjudge Handle & Room No. in this format:
 \`Student_Id Vjudge_Handle Room_No starting\`
 Example: \`230XXXX Sayeef_Mahmud 201 starting\`
 
@@ -31,7 +32,9 @@ Example: \`230XXXX Sayeef_Mahmud 201 left 06:00 PM\`
 
 **It's being considered as it's the very first TFC, so we are being lenient. But from the next TFC, if you fail to mark your attendance properly, your performance won't be counted.**
 
-***Please make sure to follow the format strictly. If you don't provide attendance information correctly, your TFC performance won't be counted.***`;
+***Please make sure to follow the format strictly. If you don't provide attendance information correctly, your TFC performance won't be counted.***`;*/
+
+        const message = `@everyone\n‼️ No further attendance for TFC-1 will be accepted. Please make sure to mark your attendance properly in the next TFC.`;
 
         await channel.send(message);
         console.log('TFC attendance info sent successfully.');
