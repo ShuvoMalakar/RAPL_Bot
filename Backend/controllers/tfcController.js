@@ -10,16 +10,15 @@ const findHandlesWithoutRecordingLinks = async () => {
         const tfcList = await TFC.find({ contestId: { $ne: null } });
 
         for (const tfc of tfcList) {
-            // Fetch only the `handle` and `recordingLink` fields from vjContests
+            // Fetch only the `handle` fields from vjContests
             const vjContest = await vjContests.findOne(
-                { number: tfc.contestId },
-                { "data.handle": 1, "data.recordingLink": 1, } // Select only needed fields
+                { contestId: tfc.contestId },
+                { "data.handle": 1 } // Select only needed fields
             );
 
             if (vjContest?.data) {
-                // Filter to find handles that **do NOT** have a recording link
+                // Get all handles from the contest data
                 const handlesWithoutLinks = vjContest.data
-                    .filter(entry => !entry.recordingLink) // Only keep those WITHOUT a link
                     .map(entry => entry.handle); // Extract only the handle names
 
                 if (handlesWithoutLinks.length > 0) {
@@ -48,7 +47,7 @@ const updateTFCDateFromVJContest = async () => {
         for (const tfc of tfcList) {
             // Fetch only the `startTime` field from vjContests
             const vjContest = await vjContests.findOne(
-                { number: tfc.contestId },
+                { contestId: tfc.contestId },
                 { startTime: 1} // Select only startTime
             );
             
@@ -199,16 +198,28 @@ const upsertTFCid = async (tfcName, tfcId) => {
     try {
         const tfcID = parseTFCid(tfcName, tfcId);
 
+        // Check if the contest exists in vjContests collection
+        const vjContest = await vjContests.findOne(
+            { contestId: String(tfcID) },
+            { startTime: 1 }
+        );
+
+        if (!vjContest) {
+            return { error: `❌ Contest ID ${tfcID} not found in VJudge contests.` };
+        }
+
+        const updateData = { name: tfcName, contestId: tfcID };
+        if (vjContest.startTime) {
+            updateData.date = vjContest.startTime;
+        }
+
         const updatedEvent = await TFC.findOneAndUpdate(
-            { name: tfcName },  // Find by TFC name
-            { 
-                name: tfcName,
-                contestId: tfcID
-            },  // Update the date
-            { upsert: true, new: true } // Create if not exists, return updated doc
+            { name: tfcName },
+            updateData,
+            { upsert: true, new: true }
         );
         console.log("✅ Event updated or inserted successfully!", tfcID);
-        return {tfcName, tfcID};
+        return { tfcName, tfcID };
         
     } catch (error) {
         console.error("❌ Error:", error.message);
@@ -262,13 +273,20 @@ async function updateTFCid(message){
 async function handletfcCommand(message) {
 
     if (message.content.startsWith('!uptfc')){
-        await updateTFC(message);
+        const args = message.content.split(' ');
+        if (args.length === 4) {
+            await updateTFC(message);
+        } else if (args.length === 3) {
+            await updateTFCid(message);
+        } else {
+            message.channel.send('Usage: `!uptfc <TFC_1> <dd/mm/yyyy> <hh:mmAM/PM>` or `!uptfc <TFC_1> <contestid>`');
+        }
     }
     else if(message.content.startsWith('!idtfc')){
         await updateTFCid(message);
     }
     else{
-        message.channel.send('Wrong Command\nUsage:\n `!uptfc <TFC_1> <dd/mm/yyyy> <hh:mmAM/PM>` `!uptfc <TFC_1> <contestid>`');
+        message.channel.send('Wrong Command\nUsage:\n `!uptfc <TFC_1> <dd/mm/yyyy> <hh:mmAM/PM>` or `!uptfc <TFC_1> <contestid>`');
         console.log('Wrong Command.');
     };
 

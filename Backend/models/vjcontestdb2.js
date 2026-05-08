@@ -1,19 +1,24 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const { db2 } = require("../config/db");
 
-const Schema = mongoose.Schema
+const Schema = mongoose.Schema;
 
 const vjContestsSchema = new Schema({
-    number: {
-        type: Number,
+    contestId: {
+        type: String,
+        trim: true,
         required: true
     },
 
-    startTime:{
-        type: Date,
-        required: false
+    startTime: {
+        type: Date
     },
-    
+
+    recordingDeadline: {
+        type: Number,
+        default: 48
+    },
+
     data: [{
         handle: {
             type: String,
@@ -26,14 +31,10 @@ const vjContestsSchema = new Schema({
         penalty: {
             type: Number,
             required: true
-        },
-        recordingLink: {
-            type: String,
-            required: false
         }
     }]
-}, {timestamps: true})
+}, { timestamps: true });
 
-const vjContests = db2.model('vjcontest', vjContestsSchema)
+const vjContests = db2.model('VJContest', vjContestsSchema);
 
 module.exports = vjContests;

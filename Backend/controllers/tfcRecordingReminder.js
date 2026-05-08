@@ -32,16 +32,15 @@ const HandlesWithoutRecordingLinks = async (hour, reminderFlag) => {
         const allHandlesWithoutLinks = [];
 
         for (const tfc of tfcList) {
-            // Fetch only the `handle` and `recordingLink` fields from vjContests
+            // Fetch only the `handle` fields from vjContests
             const vjContest = await vjContests.findOne(
-                { number: tfc.contestId },
-                { "data.handle": 1, "data.recordingLink": 1 } // Select only needed fields
+                { contestId: tfc.contestId },
+                { "data.handle": 1 } // Select only needed fields
             );
 
             if (vjContest?.data) {
-                // Filter to find handles that **do NOT** have a recording link
+                // Get all handles from the contest data
                 const handlesWithoutLinks = vjContest.data
-                    .filter(entry => !entry.recordingLink) // Only keep those WITHOUT a link
                     .map(entry => entry.handle); // Extract only the handle names
 
                 if (handlesWithoutLinks.length > 0) {

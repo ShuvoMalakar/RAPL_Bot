@@ -18,23 +18,8 @@ const fetchAndLogUsers = async () => {
         console.log("All Users:");
         allUsers.forEach((user, index) => {
             console.log(`User ${index + 1}:`);
-            console.log(`- Name: ${user.name}`);
-            /*console.log(`- Email: ${user.email}`);
-            console.log(`- Roll: ${user.roll}`);
-            console.log(`- CF Handle: ${user.cfHandle}`);*/
-            console.log(`- VJ Handle: ${user.vjHandle}`);
-            /*console.log(`- CC Handle: ${user.ccHandle || "N/A"}`);
-            console.log(`- AtCoder Handle: ${user.atcoderHandle || "N/A"}`);
-            console.log(`- Admin: ${user.admin}`);
-            console.log(`- Rating: ${user.rating}`);
-            console.log(`- Max Rating: ${user.maxRating}`);
-            console.log(`- All Time: ${user.allTime}`);
-            console.log(`- Last Year: ${user.lastYear}`);
-            console.log(`- Last Month: ${user.lastMonth}`);
-            console.log(`- Reset Password Token: ${user.resetPasswordToken || "N/A"}`);
-            console.log(`- Reset Password Expires: ${user.resetPasswordExpires || "N/A"}`);
-            console.log(`- Created At: ${user.createdAt}`);
-            console.log(`- Updated At: ${user.updatedAt}`);*/
+            console.log(`- Name: ${user.firstName} ${user.lastName}`);
+            console.log(`- VJ Handle: ${user.ojInfo?.vjHandle || "N/A"}`);
             console.log("-----------------------------");
         });
     } catch (error) {
