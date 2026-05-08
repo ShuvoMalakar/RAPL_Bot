@@ -12,6 +12,7 @@ const { tfc5DayReminders, tfc2DayReminders,tfc1DayReminders, tfc2hoursReminders,
 const {updateTFCDateFromVJContest, findHandlesWithoutRecordingLinks} = require('./controllers/tfcController');
 const {RecordingLinksRem} = require('./controllers/tfcRecordingReminder');
 const {sendTfcAttendanceInfo} = require('./controllers/tfcAttendance');
+const {sendAttendanceReminder} = require('./controllers/tfcAttendanceReminder');
 const startBot = require('./config/bot');
 const {fetchUserInfo, fetchMentionedUsers, mentionUsers,} = require('./controllers/usersController');
 const  {bot_running} = require('./controllers/botRunning');
@@ -109,6 +110,16 @@ app.post('/contests-reminders', async (req, res) => {
         res.status(200).send('Contest reminders sent successfully.');
     } catch (error) {
         console.error('Error sending contest reminders:', error.message);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+app.post('/tfc-attendance-reminder', async (req, res) => {
+    try {
+        const result = await sendAttendanceReminder(client);
+        res.status(200).json(result);
+    } catch (error) {
+        console.error('Error sending attendance reminder:', error.message);
         res.status(500).send('Internal Server Error');
     }
 });
