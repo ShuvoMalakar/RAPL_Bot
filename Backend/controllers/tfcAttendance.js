@@ -40,10 +40,15 @@ async function sendTfcAttendanceInfo(client) {
             `⏹️ **When leaving the arena:**\n` +
             `\`<StudentId> <VjHandle> leaving\`\n` +
             `Example: \`2301234 Sayeef_Mahmud leaving\`\n\n` +
+            `🕐 **Forgot to mark on time?** (within 6 hrs after contest ends)\n` +
+            `Started: \`<StudentId> <VjHandle> <RoomNo> started <time>\`\n` +
+            `Example: \`2301234 Sayeef_Mahmud 201 started 4:00PM\`\n` +
+            `Left: \`<StudentId> <VjHandle> left <time>\`\n` +
+            `Example: \`2301234 Sayeef_Mahmud left 6:00PM\`\n\n` +
             `🏠 If you are in the RAPL Lab, write **RAPL** instead of room number.\n` +
             `Valid rooms: **101, 102, 103, 104, 201, 202, 203, RAPL**\n\n` +
             `⚠️ **VJudge handle is case-sensitive. Student ID must be 7 digits.**\n` +
-            `⚠️ **Late attendance will NOT be granted.**\n` +
+            `⚠️ **Late attendance beyond 6 hours will NOT be granted.**\n` +
             `⚠️ **If you fail to mark attendance properly, your TFC performance won't be counted.**`;
 
         await channel.send(message);

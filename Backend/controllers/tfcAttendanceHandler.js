@@ -12,6 +12,17 @@ const parseDurationHours = (duration) => {
     return match ? parseInt(match[1], 10) : 4;
 };
 
+// Parse user-provided time (e.g. "4:00PM", "6:00pm") in BD timezone to UTC Date
+const parseUserTime = (timeStr, referenceDate) => {
+    // Get the date portion from referenceDate in BD timezone
+    const refBD = moment.utc(referenceDate).tz('Asia/Dhaka');
+    const dateStr = refBD.format('DD/MM/YYYY');
+    const dateTimeString = `${dateStr} ${timeStr}`;
+    const parsed = moment.tz(dateTimeString, "DD/MM/YYYY h:mmA", "Asia/Dhaka");
+    if (!parsed.isValid()) return null;
+    return parsed.utc().toDate();
+};
+
 // Find current or upcoming TFC (within 1 hour before start, or during contest)
 const findActiveTFC = async () => {
     const now = moment.utc();
@@ -52,70 +63,124 @@ const findActiveTFCForLeaving = async () => {
     return null;
 };
 
-async function handleTfcAttendance(message) {
-    const content = message.content.trim();
-    const args = content.split(/\s+/);
+// Find TFC eligible for late attendance (within 6 hours after contest ends)
+const findTFCForLateAttendance = async () => {
+    const now = moment.utc();
 
-    if (args.length < 3 || args.length > 4) {
-        return message.reply(`❌ Invalid format.\nStarting: \`<StudentId> <VjHandle> <RoomNo> starting\`\nLeaving: \`<StudentId> <VjHandle> leaving\` or \`<StudentId> <VjHandle> <RoomNo> leaving\``);
-    }
+    const tfcList = await TFC.find({ date: { $ne: null } }).sort({ date: -1 });
 
-    // Determine action (always last word)
-    const actionLower = args[args.length - 1].toLowerCase();
+    for (const tfc of tfcList) {
+        const start = moment.utc(tfc.date);
+        const durationHours = parseDurationHours(tfc.duration);
+        const end = start.clone().add(durationHours, 'hours');
+        const lateDeadline = end.clone().add(6, 'hours');
 
-    if (actionLower !== 'starting' && actionLower !== 'leaving') {
-        return message.reply(`❌ Last word must be \`starting\` or \`leaving\`.`);
-    }
-
-    let studentId, vjHandle, roomNo;
-
-    if (actionLower === 'starting') {
-        if (args.length !== 4) {
-            return message.reply(`❌ Starting format: \`<StudentId> <VjHandle> <RoomNo> starting\``);
-        }
-        [studentId, vjHandle, roomNo] = args;
-    } else {
-        // Leaving: room is optional
-        if (args.length === 4) {
-            [studentId, vjHandle, roomNo] = args;
-        } else {
-            [studentId, vjHandle] = args;
-            roomNo = null;
+        if (now.isAfter(start) && now.isBefore(lateDeadline)) {
+            return tfc;
         }
     }
+    return null;
+};
 
-    // Validate action
-    if (actionLower !== 'starting' && actionLower !== 'leaving') {
-        return message.reply(`❌ Last word must be \`starting\` or \`leaving\`.`);
-    }
-
-    // Validate student ID (7 digits)
+// Common validation for studentId, room, and user lookup
+const validateCommon = async (message, studentId, vjHandle, roomNo, roomRequired) => {
     if (!/^\d{7}$/.test(studentId)) {
-        return message.reply(`❌ Student ID must be exactly 7 digits.`);
+        await message.reply(`❌ Student ID must be exactly 7 digits.`);
+        return null;
     }
 
-    // Validate room number (required for starting, optional for leaving)
-    if (roomNo && !VALID_ROOMS.includes(roomNo)) {
-        return message.reply(`❌ Invalid room. Valid: ${VALID_ROOMS.join(', ')}`);
+    if (roomRequired && !roomNo) {
+        await message.reply(`❌ Room number is required.`);
+        return null;
     }
 
-    // Verify user exists in DB with matching roll + vjHandle
+    if (roomNo && !VALID_ROOMS.includes(roomNo.toUpperCase())) {
+        await message.reply(`❌ Invalid room. Valid: ${VALID_ROOMS.join(', ')}`);
+        return null;
+    }
+
     const user = await users.findOne({ roll: studentId });
     if (!user) {
-        return message.reply(`❌ Roll \`${studentId}\` is not registered on rapl.site.`);
+        await message.reply(`❌ Roll \`${studentId}\` is not registered on rapl.site.`);
+        return null;
     }
 
     if (user.ojInfo?.vjHandle !== vjHandle) {
         const registeredHandle = user.ojInfo?.vjHandle || 'N/A';
-        return message.reply(`❌ VJudge handle mismatch. Roll \`${studentId}\` is registered with handle \`${registeredHandle}\`, not \`${vjHandle}\`.`);
+        await message.reply(`❌ VJudge handle mismatch. Roll \`${studentId}\` is registered with handle \`${registeredHandle}\`, not \`${vjHandle}\`.`);
+        return null;
     }
 
-    const now = moment.utc().toDate();
+    return user;
+};
 
-    if (actionLower === 'starting') {
-        await handleStarting(message, studentId, vjHandle, roomNo, now);
-    } else {
-        await handleLeaving(message, studentId, vjHandle, roomNo, now);
+async function handleTfcAttendance(message) {
+    const content = message.content.trim();
+    const args = content.split(/\s+/);
+
+    // Detect action keyword and its position
+    // Formats:
+    //   <id> <handle> <room> starting          (4 args)
+    //   <id> <handle> leaving                  (3 args)
+    //   <id> <handle> <room> leaving           (4 args)
+    //   <id> <handle> <room> started <time>    (5 args)
+    //   <id> <handle> <room> left <time>       (5 args)
+    //   <id> <handle> left <time>              (4 args)
+
+    if (args.length < 3 || args.length > 5) {
+        return message.reply(
+            `❌ Invalid format.\n` +
+            `Starting: \`<Id> <VjHandle> <Room> starting\`\n` +
+            `Leaving: \`<Id> <VjHandle> leaving\`\n` +
+            `Late start: \`<Id> <VjHandle> <Room> started <time>\`\n` +
+            `Late leave: \`<Id> <VjHandle> left <time>\``
+        );
+    }
+
+    // 5 args: late started/left with time
+    if (args.length === 5) {
+        const actionLower = args[3].toLowerCase();
+        if (actionLower === 'started') {
+            return await handleLateStarting(message, args[0], args[1], args[2], args[4]);
+        } else if (actionLower === 'left') {
+            return await handleLateLeaving(message, args[0], args[1], args[2], args[4]);
+        } else {
+            return message.reply(`❌ Expected \`started\` or \`left\` as 4th word.`);
+        }
+    }
+
+    // 4 args: could be starting, leaving (with room), left <time> (no room), started <time> (no room)
+    if (args.length === 4) {
+        const actionLower = args[3].toLowerCase();
+        if (actionLower === 'starting') {
+            const valid = await validateCommon(message, args[0], args[1], args[2], true);
+            if (!valid) return;
+            return await handleStarting(message, args[0], args[1], args[2], message.createdAt);
+        } else if (actionLower === 'leaving') {
+            const valid = await validateCommon(message, args[0], args[1], args[2], false);
+            if (!valid) return;
+            return await handleLeaving(message, args[0], args[1], args[2], message.createdAt);
+        } else if (args[2].toLowerCase() === 'left') {
+            // <id> <handle> left <time>
+            return await handleLateLeaving(message, args[0], args[1], null, args[3]);
+        } else if (args[2].toLowerCase() === 'started') {
+            // <id> <handle> started <time> (no room) - room is required
+            return message.reply(`❌ Room number is required for starting.\nUsage: \`<Id> <VjHandle> <Room> started <time>\``);
+        } else {
+            return message.reply(`❌ Unrecognized command. Use \`starting\`, \`leaving\`, \`started\`, or \`left\`.`);
+        }
+    }
+
+    // 3 args: leaving without room
+    if (args.length === 3) {
+        const actionLower = args[2].toLowerCase();
+        if (actionLower === 'leaving') {
+            const valid = await validateCommon(message, args[0], args[1], null, false);
+            if (!valid) return;
+            return await handleLeaving(message, args[0], args[1], null, message.createdAt);
+        } else {
+            return message.reply(`❌ Expected \`leaving\` as 3rd word.`);
+        }
     }
 }
 
@@ -125,7 +190,6 @@ async function handleStarting(message, studentId, vjHandle, roomNo, now) {
         return message.reply(`❌ No TFC is currently active or starting within 1 hour.`);
     }
 
-    // Check if already recorded starting for this TFC
     const existing = await TFCAttendance.findOne({
         studentId: studentId,
         tfcId: tfc._id,
@@ -136,7 +200,6 @@ async function handleStarting(message, studentId, vjHandle, roomNo, now) {
         return message.reply(`❌ Starting attendance already recorded for **${tfc.name}**.`);
     }
 
-    // Upsert attendance record
     await TFCAttendance.findOneAndUpdate(
         { studentId: studentId, tfcId: tfc._id },
         {
@@ -155,7 +218,7 @@ async function handleStarting(message, studentId, vjHandle, roomNo, now) {
     return message.reply(
         `✅ **Starting** recorded for **${tfc.name}**.\n` +
         `Roll: \`${studentId}\` | Handle: \`${vjHandle}\` | Time: ${timeStr}\n` +
-        `At leaving, send: \`${studentId} ${vjHandle} ${roomNo} leaving\``
+        `At leaving, send: \`${studentId} ${vjHandle} leaving\``
     );
 }
 
@@ -170,7 +233,6 @@ async function handleLeaving(message, studentId, vjHandle, roomNo, now) {
         return message.reply(`❌ Contest hasn't started yet. Can't record leaving.`);
     }
 
-    // Check if user has starting attendance
     const existing = await TFCAttendance.findOne({
         studentId: studentId,
         tfcId: tfc._id,
@@ -185,7 +247,6 @@ async function handleLeaving(message, studentId, vjHandle, roomNo, now) {
         return message.reply(`❌ Leaving attendance already recorded for **${tfc.name}**.`);
     }
 
-    // Verify credentials match
     if (existing.vjHandle !== vjHandle) {
         return message.reply(`❌ VJudge handle doesn't match your starting record.`);
     }
@@ -204,4 +265,166 @@ async function handleLeaving(message, studentId, vjHandle, roomNo, now) {
     );
 }
 
-module.exports = { handleTfcAttendance };
+async function handleLateStarting(message, studentId, vjHandle, roomNo, timeStr) {
+    const valid = await validateCommon(message, studentId, vjHandle, roomNo, true);
+    if (!valid) return;
+
+    const tfc = await findTFCForLateAttendance();
+    if (!tfc) {
+        return message.reply(`❌ No TFC found eligible for late attendance.`);
+    }
+
+    const tfcStart = moment.utc(tfc.date);
+    const durationHours = parseDurationHours(tfc.duration);
+    const tfcEnd = tfcStart.clone().add(durationHours, 'hours');
+
+    const parsedTime = parseUserTime(timeStr, tfc.date);
+    if (!parsedTime) {
+        return message.reply(`❌ Invalid time format. Use \`h:mmAM/PM\` (e.g., 4:00PM).`);
+    }
+
+    const parsedMoment = moment.utc(parsedTime);
+
+    if (parsedMoment.isBefore(tfcStart)) {
+        return message.reply(`❌ Starting time can't be before contest start (${tfcStart.tz('Asia/Dhaka').format('hh:mm A')}).`);
+    }
+
+    if (parsedMoment.isAfter(tfcEnd)) {
+        return message.reply(`❌ Starting time can't be after contest end (${tfcEnd.tz('Asia/Dhaka').format('hh:mm A')}).`);
+    }
+
+    const existing = await TFCAttendance.findOne({
+        studentId: studentId,
+        tfcId: tfc._id,
+        startingTime: { $ne: null },
+    });
+
+    if (existing) {
+        return message.reply(`❌ Starting attendance already recorded for **${tfc.name}**.`);
+    }
+
+    await TFCAttendance.findOneAndUpdate(
+        { studentId: studentId, tfcId: tfc._id },
+        {
+            discordId: message.author.id,
+            studentId: studentId,
+            vjHandle: vjHandle,
+            roomNo: roomNo,
+            tfcId: tfc._id,
+            startingMessageTime: message.createdAt,
+            startingTime: parsedTime,
+        },
+        { upsert: true, new: true }
+    );
+
+    const recordedTime = moment(parsedTime).tz('Asia/Dhaka').format('hh:mm A');
+    return message.reply(
+        `✅ **Late starting** recorded for **${tfc.name}**.\n` +
+        `Roll: \`${studentId}\` | Handle: \`${vjHandle}\` | Time: ${recordedTime}\n` +
+        `To mark leaving, send: \`${studentId} ${vjHandle} left <time>\``
+    );
+}
+
+async function handleLateLeaving(message, studentId, vjHandle, roomNo, timeStr) {
+    const valid = await validateCommon(message, studentId, vjHandle, roomNo, false);
+    if (!valid) return;
+
+    const tfc = await findTFCForLateAttendance();
+    if (!tfc) {
+        return message.reply(`❌ No TFC found eligible for late attendance.`);
+    }
+
+    const existing = await TFCAttendance.findOne({
+        studentId: studentId,
+        tfcId: tfc._id,
+        startingTime: { $ne: null },
+    });
+
+    if (!existing) {
+        return message.reply(`❌ No starting attendance found for **${tfc.name}**. You must mark starting first.`);
+    }
+
+    if (existing.leavingTime) {
+        return message.reply(`❌ Leaving attendance already recorded for **${tfc.name}**.`);
+    }
+
+    if (existing.vjHandle !== vjHandle) {
+        return message.reply(`❌ VJudge handle doesn't match your starting record.`);
+    }
+
+    const parsedTime = parseUserTime(timeStr, tfc.date);
+    if (!parsedTime) {
+        return message.reply(`❌ Invalid time format. Use \`h:mmAM/PM\` (e.g., 6:00PM).`);
+    }
+
+    const parsedMoment = moment.utc(parsedTime);
+    const startingMoment = moment.utc(existing.startingTime);
+    const maxLeaving = startingMoment.clone().add(6, 'hours');
+
+    if (parsedMoment.isBefore(startingMoment)) {
+        return message.reply(`❌ Leaving time can't be before your starting time (${startingMoment.tz('Asia/Dhaka').format('hh:mm A')}).`);
+    }
+
+    if (parsedMoment.isAfter(maxLeaving)) {
+        return message.reply(`❌ Leaving time can't be more than 6 hours after starting time.`);
+    }
+
+    existing.leavingMessageTime = message.createdAt;
+    existing.leavingTime = parsedTime;
+    if (roomNo) {
+        existing.roomNo = roomNo;
+    }
+    await existing.save();
+
+    const recordedTime = moment(parsedTime).tz('Asia/Dhaka').format('hh:mm A');
+    return message.reply(
+        `✅ **Late leaving** recorded for **${tfc.name}**.\n` +
+        `Roll: \`${studentId}\` | Handle: \`${vjHandle}\` | Time: ${recordedTime}`
+    );
+}
+
+async function handleOverrideAttendance(message) {
+    // Only server owner can use this
+    const guild = message.guild;
+    if (message.author.id !== guild.ownerId) {
+        return message.reply(`❌ Only the server owner can use this command.`);
+    }
+
+    // Format: !override <messageId> <discordUserId>
+    const args = message.content.trim().split(/\s+/);
+    if (args.length < 3) {
+        return message.reply(`❌ Usage: \`!override <messageId> <discordUserId>\``);
+    }
+
+    const [, messageId, discordUserId] = args;
+
+    const attendanceChannelId = process.env.TFC_ATTENDANCE_CHANNEL;
+    try {
+        // Fetch the attendance channel
+        const attendanceChannel = await message.client.channels.fetch(attendanceChannelId);
+        if (!attendanceChannel) {
+            return message.reply(`❌ Could not find the attendance channel.`);
+        }
+
+        // Fetch the target message
+        const targetMessage = await attendanceChannel.messages.fetch(messageId);
+        if (!targetMessage) {
+            return message.reply(`❌ Message not found in attendance channel.`);
+        }
+
+        // Verify author matches provided discordUserId
+        if (targetMessage.author.id !== discordUserId) {
+            return message.reply(`❌ Message author doesn't match the provided Discord user ID.`);
+        }
+
+        // Process the target message as attendance
+        await handleTfcAttendance(targetMessage);
+
+        return message.reply(`✅ Override processed. Replied to <@${discordUserId}>'s message in attendance channel.`);
+    } catch (error) {
+        console.error('Override error:', error.message);
+        return message.reply(`❌ Error: ${error.message}`);
+    }
+}
+
+module.exports = { handleTfcAttendance, handleOverrideAttendance };
