@@ -98,6 +98,13 @@ async function sendAttendanceReminder(client) {
 
     let messagesSent = 0;
 
+    // Calculate attendance deadline (6 hours after TFC ends)
+    const start = moment.utc(targetTFC.date);
+    const durationHours = parseDurationHours(targetTFC.duration);
+    const end = start.clone().add(durationHours, 'hours');
+    const deadline = end.clone().add(6, 'hours').tz('Asia/Dhaka');
+    const deadlineStr = deadline.format('DD MMM, hh:mm A');
+
     // Message 1: Users who didn't provide starting attendance
     if (noStartingHandles.length > 0) {
         // Try to find discord IDs from previous attendance records
@@ -122,7 +129,7 @@ async function sendAttendanceReminder(client) {
         });
 
         const header = `⚠️ **${targetTFC.name}** - No starting attendance:`;
-        const footer = `Submit: \`<Id> <VjHandle> <Room> started <time>\` & \`<Id> <VjHandle> left <time>\`\nTime: \`3:00PM\` or \`15:00\``;
+        const footer = `Submit before **${deadlineStr}**: \`<Id> <VjHandle> <Room> started <time>\` & \`<Id> <VjHandle> left <time>\`\nTime: \`3:00PM\` or \`15:00\``;
         const chunks = buildChunkedMessages(header, mentions, footer);
 
         for (const msg of chunks) {
@@ -142,7 +149,7 @@ async function sendAttendanceReminder(client) {
         });
 
         const header = `⚠️ **${targetTFC.name}** - No leaving marked:`;
-        const footer = `Submit: \`<Id> <VjHandle> leaving\` or \`<Id> <VjHandle> left <time>\`\nTime: \`3:00PM\` or \`15:00\``;
+        const footer = `Submit before **${deadlineStr}**: \`<Id> <VjHandle> leaving\` or \`<Id> <VjHandle> left <time>\`\nTime: \`3:00PM\` or \`15:00\``;
         const chunks = buildChunkedMessages(header, mentions, footer);
 
         for (const msg of chunks) {
