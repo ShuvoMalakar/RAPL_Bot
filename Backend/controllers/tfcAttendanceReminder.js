@@ -122,7 +122,7 @@ async function sendAttendanceReminder(client) {
         });
 
         const header = `⚠️ **${targetTFC.name}** - No starting attendance:`;
-        const footer = `Submit: \`<Id> <VjHandle> <Room> started <time>\` & \`<Id> <VjHandle> left <time>\``;
+        const footer = `Submit: \`<Id> <VjHandle> <Room> started <time>\` & \`<Id> <VjHandle> left <time>\`\nTime: \`3:00PM\` or \`15:00\``;
         const chunks = buildChunkedMessages(header, mentions, footer);
 
         for (const msg of chunks) {
@@ -142,7 +142,7 @@ async function sendAttendanceReminder(client) {
         });
 
         const header = `⚠️ **${targetTFC.name}** - No leaving marked:`;
-        const footer = `Submit: \`<Id> <VjHandle> leaving\` or \`<Id> <VjHandle> left <time>\``;
+        const footer = `Submit: \`<Id> <VjHandle> leaving\` or \`<Id> <VjHandle> left <time>\`\nTime: \`3:00PM\` or \`15:00\``;
         const chunks = buildChunkedMessages(header, mentions, footer);
 
         for (const msg of chunks) {

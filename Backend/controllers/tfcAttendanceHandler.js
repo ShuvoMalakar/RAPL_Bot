@@ -12,15 +12,21 @@ const parseDurationHours = (duration) => {
     return match ? parseInt(match[1], 10) : 4;
 };
 
-// Parse user-provided time (e.g. "4:00PM", "6:00pm") in BD timezone to UTC Date
+// Parse user-provided time (e.g. "4:00PM", "6:00pm", "15:30") in BD timezone to UTC Date
 const parseUserTime = (timeStr, referenceDate) => {
-    // Get the date portion from referenceDate in BD timezone
     const refBD = moment.utc(referenceDate).tz('Asia/Dhaka');
     const dateStr = refBD.format('DD/MM/YYYY');
     const dateTimeString = `${dateStr} ${timeStr}`;
-    const parsed = moment.tz(dateTimeString, "DD/MM/YYYY h:mmA", "Asia/Dhaka");
-    if (!parsed.isValid()) return null;
-    return parsed.utc().toDate();
+
+    // Try 12-hour format first (e.g. 4:00PM)
+    let parsed = moment.tz(dateTimeString, "DD/MM/YYYY h:mmA", "Asia/Dhaka");
+    if (parsed.isValid()) return parsed.utc().toDate();
+
+    // Try 24-hour format (e.g. 15:30)
+    parsed = moment.tz(dateTimeString, "DD/MM/YYYY H:mm", "Asia/Dhaka");
+    if (parsed.isValid()) return parsed.utc().toDate();
+
+    return null;
 };
 
 // Find current or upcoming TFC (within 1 hour before start, or during contest)
@@ -116,7 +122,16 @@ const validateCommon = async (message, studentId, vjHandle, roomNo, roomRequired
 
 async function handleTfcAttendance(message) {
     const content = message.content.trim();
-    const args = content.split(/\s+/);
+    let args = content.split(/\s+/);
+
+    // Join trailing AM/PM to the previous time arg (e.g. "3:00 PM" -> "3:00PM")
+    if (args.length >= 2) {
+        const last = args[args.length - 1].toLowerCase();
+        if (last === 'am' || last === 'pm') {
+            args[args.length - 2] = args[args.length - 2] + args[args.length - 1];
+            args.pop();
+        }
+    }
 
     // Detect action keyword and its position
     // Formats:
@@ -133,7 +148,8 @@ async function handleTfcAttendance(message) {
             `Starting: \`<Id> <VjHandle> <Room> starting\`\n` +
             `Leaving: \`<Id> <VjHandle> leaving\`\n` +
             `Late start: \`<Id> <VjHandle> <Room> started <time>\`\n` +
-            `Late leave: \`<Id> <VjHandle> left <time>\``
+            `Late leave: \`<Id> <VjHandle> left <time>\`\n` +
+            `Time format: \`3:00PM\` or \`15:00\``
         );
     }
 
@@ -145,7 +161,12 @@ async function handleTfcAttendance(message) {
         } else if (actionLower === 'left') {
             return await handleLateLeaving(message, args[0], args[1], args[2], args[4]);
         } else {
-            return message.reply(`❌ Expected \`started\` or \`left\` as 4th word.`);
+            return message.reply(
+                `❌ 4th word must be \`started\` or \`left\`.\n` +
+                `Late start: \`<Id> <VjHandle> <Room> started <time>\`\n` +
+                `Late leave: \`<Id> <VjHandle> <Room> left <time>\`\n` +
+                `Time format: \`3:00PM\` or \`15:00\``
+            );
         }
     }
 
@@ -165,9 +186,16 @@ async function handleTfcAttendance(message) {
             return await handleLateLeaving(message, args[0], args[1], null, args[3]);
         } else if (args[2].toLowerCase() === 'started') {
             // <id> <handle> started <time> (no room) - room is required
-            return message.reply(`❌ Room number is required for starting.\nUsage: \`<Id> <VjHandle> <Room> started <time>\``);
+            return message.reply(`❌ Room number is required for starting.\nUsage: \`<Id> <VjHandle> <Room> started <time>\`\nTime format: \`3:00PM\` or \`15:00\``);
         } else {
-            return message.reply(`❌ Unrecognized command. Use \`starting\`, \`leaving\`, \`started\`, or \`left\`.`);
+            return message.reply(
+                `❌ Unrecognized command.\n` +
+                `Starting: \`<Id> <VjHandle> <Room> starting\`\n` +
+                `Leaving: \`<Id> <VjHandle> leaving\`\n` +
+                `Late start: \`<Id> <VjHandle> <Room> started <time>\`\n` +
+                `Late leave: \`<Id> <VjHandle> left <time>\`\n` +
+                `Time format: \`3:00PM\` or \`15:00\``
+            );
         }
     }
 
@@ -280,7 +308,7 @@ async function handleLateStarting(message, studentId, vjHandle, roomNo, timeStr)
 
     const parsedTime = parseUserTime(timeStr, tfc.date);
     if (!parsedTime) {
-        return message.reply(`❌ Invalid time format. Use \`h:mmAM/PM\` (e.g., 4:00PM).`);
+        return message.reply(`❌ Invalid time format. Use \`h:mmAM/PM\` (e.g., 4:00PM) or \`HH:mm\` (e.g., 16:00).`);
     }
 
     const parsedMoment = moment.utc(parsedTime);
@@ -354,7 +382,7 @@ async function handleLateLeaving(message, studentId, vjHandle, roomNo, timeStr) 
 
     const parsedTime = parseUserTime(timeStr, tfc.date);
     if (!parsedTime) {
-        return message.reply(`❌ Invalid time format. Use \`h:mmAM/PM\` (e.g., 6:00PM).`);
+        return message.reply(`❌ Invalid time format. Use \`h:mmAM/PM\` (e.g., 6:00PM) or \`HH:mm\` (e.g., 18:00).`);
     }
 
     const parsedMoment = moment.utc(parsedTime);
