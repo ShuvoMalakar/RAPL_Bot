@@ -268,7 +268,7 @@ async function handleLeaving(message, studentId, vjHandle, roomNo, now) {
     });
 
     if (!existing) {
-        return message.reply(`❌ No starting attendance found for **${tfc.name}**. You must mark starting first.`);
+        return message.reply(`❌ No starting attendance found for **${tfc.name}**. Mark starting first:\n\`<Id> <VjHandle> <Room> starting\` or \`<Id> <VjHandle> <Room> started <time>\`\nTime: \`3:00PM\` or \`15:00\``);
     }
 
     if (existing.leavingTime) {
@@ -369,7 +369,7 @@ async function handleLateLeaving(message, studentId, vjHandle, roomNo, timeStr) 
     });
 
     if (!existing) {
-        return message.reply(`❌ No starting attendance found for **${tfc.name}**. You must mark starting first.`);
+        return message.reply(`❌ No starting attendance found for **${tfc.name}**. Mark starting first:\n\`<Id> <VjHandle> <Room> starting\` or \`<Id> <VjHandle> <Room> started <time>\`\nTime: \`3:00PM\` or \`15:00\``);
     }
 
     if (existing.leavingTime) {
