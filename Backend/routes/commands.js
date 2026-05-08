@@ -3,6 +3,7 @@ const moment = require('moment-timezone');
 const { handleCfhandleCommand } = require("../controllers/cfController");
 const { handletfcCommand } = require("../controllers/tfcController");
 const  {bot_running} = require('../controllers/botRunning');
+const { handleTfcAttendance } = require('../controllers/tfcAttendanceHandler');
 /*const  {
     client, 
     codechef_timezone,
@@ -21,6 +22,7 @@ const reminderdChannelId = process.env.REMINDER_CHANNEL_ID;
 const codechef_timezone = process.env.CODECHEF_TIMEZONE;
 const tfcChannelId = process.env.TFC_CHANNEL;
 const tfcControllerId = process.env.TFC_CONTROLLER_CHANNEL;
+const tfcAttendanceChannelId = process.env.TFC_ATTENDANCE_CHANNEL;
 const runBot = process.env.HACK_RAPL_BOT;
 /*// Function to fetch Codeforces rating
 async function getCodeforcesRating(handle) {
@@ -81,6 +83,9 @@ async function processCommands(message) {
     }
     else if(message.channel.id == runBot){
         bot_running(message);
+    }
+    else if(message.channel.id == tfcAttendanceChannelId){
+        await handleTfcAttendance(message);
     }
     else{
         //console.log('Not from the desired channel.');
