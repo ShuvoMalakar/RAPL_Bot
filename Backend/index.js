@@ -114,6 +114,17 @@ app.post('/contests-reminders', async (req, res) => {
     }
 });
 
+app.post('/tfc-recording-reminders', async (req, res) => {
+    try {
+        RecordingLinksRem(process.env.TFC_CHANNEL, client, EmbedBuilder);
+        
+        res.status(200).send('TFC recording reminders sent successfully.');
+    } catch (error) {
+        console.error('Error sending TFC recording reminders:', error.message);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 app.post('/tfc-attendance-reminder', async (req, res) => {
     try {
         const result = await sendAttendanceReminder(client);
