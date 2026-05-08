@@ -48,7 +48,7 @@ async function tfc5DayReminders(desiredChannelId, client, EmbedBuilder) {
                 }
                 ///await channel.send(reminderMessage);
                 await channel.send({ content: `${contest.name} starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
-                console.log("✅ Sent Reminder to Discord successfully!");
+                console.log(`Sent TFC 5d reminder: ${contest.name}`);
             } catch (error) {
                 console.error("❌ Error sending reminder to Discord:", error.message);
             }
@@ -56,8 +56,8 @@ async function tfc5DayReminders(desiredChannelId, client, EmbedBuilder) {
             // Directly update the _5dReminder field in the database
             try {
                 await TFC.updateOne(
-                    { name: contest.name }, // Filter by contes
-                    { $set: { _5dReminder: true } } // Set _5dReminder to true
+                    { name: contest.name },
+                    { $set: { _5dReminder: true } }
                 );
             } catch (error) {
                 console.error("❌ Error setting the _5d Reminder to true:", error.message);
@@ -113,7 +113,7 @@ async function tfc2DayReminders(desiredChannelId, client, EmbedBuilder) {
                 }
                 ///await channel.send(reminderMessage);
                 await channel.send({ content: `${contest.name} starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
-                console.log("✅ Sent Reminder to Discord successfully!");
+                console.log(`Sent TFC 2d reminder: ${contest.name}`);
             } catch (error) {
                 console.error("❌ Error sending reminder to Discord:", error.message);
             }
@@ -121,7 +121,7 @@ async function tfc2DayReminders(desiredChannelId, client, EmbedBuilder) {
             // Directly update the _5dReminder field in the database
             try {
                 await TFC.updateOne(
-                    { name: contest.name }, // Filter by contest ID
+                    { name: contest.name },
                     { 
                         $set: { 
                             _5dReminder: true, 
@@ -183,7 +183,7 @@ for (const contest of contests) {
         }
         ///await channel.send(reminderMessage);
         await channel.send({ content: `${contest.name} starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
-        console.log("✅ Sent Reminder to Discord successfully!");
+        console.log(`Sent TFC 1d reminder: ${contest.name}`);
     } catch (error) {
         console.error("❌ Error sending reminder to Discord:", error.message);
     }
@@ -191,7 +191,7 @@ for (const contest of contests) {
     // Directly update the _5dReminder field in the database
     try {
         await TFC.updateOne(
-            { name: contest.name }, // Filter by contes
+            { name: contest.name },
                     { 
                         $set: { 
                             _5dReminder: true, 
@@ -254,7 +254,7 @@ async function tfc2hoursReminders(desiredChannelId, client, EmbedBuilder) {
                 }
                 ///await channel.send(reminderMessage);
                 await channel.send({ content: `${contest.name} starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
-                console.log("✅ Sent Reminder to Discord successfully!");
+                console.log(`Sent TFC 2h reminder: ${contest.name}`);
             } catch (error) {
                 console.error("❌ Error sending reminder to Discord:", error.message);
             }
@@ -262,7 +262,7 @@ async function tfc2hoursReminders(desiredChannelId, client, EmbedBuilder) {
             // Directly update the _5dReminder field in the database
             try {
                 await TFC.updateOne(
-                    { name: contest.name }, // Filter by contesntest ID
+                    { name: contest.name },
                     { 
                         $set: { 
                             _5dReminder: true, 
@@ -327,7 +327,7 @@ async function tfc20minutesReminders(desiredChannelId, client, EmbedBuilder) {
             }
             ///await channel.send(reminderMessage);
             await channel.send({ content: `${contest.name} starts in ${remainingTimeString}\n@everyone`, embeds: [embed] });
-            console.log("✅ Sent Reminder to Discord successfully!");
+            console.log(`Sent TFC 20m reminder: ${contest.name}`);
         } catch (error) {
             console.error("❌ Error sending reminder to Discord:", error.message);
         }
@@ -335,7 +335,7 @@ async function tfc20minutesReminders(desiredChannelId, client, EmbedBuilder) {
         // Directly update the _5dReminder field in the database
         try {
             await TFC.updateOne(
-                { name: contest.name }, // Filter by contest ID
+                { name: contest.name },
                     { 
                         $set: { 
                             _5dReminder: true, 

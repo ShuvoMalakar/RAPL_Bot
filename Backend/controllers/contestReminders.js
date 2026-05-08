@@ -50,7 +50,7 @@ async function send5DayReminders(desiredChannelId, client, EmbedBuilder) {
                 }
                 ///await channel.send(reminderMessage);
                 await channel.send({ content:`📊 Starts in ${remainingTimeString}\n${contest.name}\n@everyone`, embeds: [embed] });
-                console.log("✅ Sent Reminder to Discord successfully!");
+                console.log(`Sent 5d reminder: ${contest.name}`);
             } catch (error) {
                 console.error("❌ Error sending reminder to Discord:", error.message);
             }
@@ -118,7 +118,7 @@ async function send2DayReminders(desiredChannelId, client, EmbedBuilder) {
                 }
                 ///await channel.send(reminderMessage);
                 await channel.send({ content: `📊 Starts in ${remainingTimeString}\n${contest.name}\n@everyone`, embeds: [embed] });
-                console.log("✅ Sent Reminder to Discord successfully!");
+                console.log(`Sent 2d reminder: ${contest.name}`);
             } catch (error) {
                 console.error("❌ Error sending reminder to Discord:", error.message);
             }
@@ -191,7 +191,7 @@ async function send1DayReminders(desiredChannelId, client, EmbedBuilder) {
                 }
                 ///await channel.send(reminderMessage);
                 await channel.send({ content: `📊 Starts in ${remainingTimeString}\n${contest.name}\n@everyone`, embeds: [embed] });
-                console.log("✅ Sent Reminder to Discord successfully!");
+                console.log(`Sent 1d reminder: ${contest.name}`);
             } catch (error) {
                 console.error("❌ Error sending reminder to Discord:", error.message);
             }
@@ -265,15 +265,15 @@ async function send2hoursReminders(desiredChannelId, client, EmbedBuilder) {
                 }
                 ///await channel.send(reminderMessage);
                 await channel.send({ content: `📊 Starts in ${remainingTimeString}\n${contest.name}\n@everyone`, embeds: [embed] });
-                console.log("✅ Sent Reminder to Discord successfully!");
+                console.log(`Sent 2h reminder: ${contest.name}`);
             } catch (error) {
                 console.error("❌ Error sending reminder to Discord:", error.message);
             }
 
-            // Directly update the _1dReminder field in the database
+            // Directly update the _2hReminder field in the database
             try {
                 await upcomingContest.updateMany(
-                    { link: contest.link }, // Filter by contest ID
+                    { link: contest.link },
                     { 
                         $set: { 
                             _5dReminder: true, 
@@ -281,14 +281,12 @@ async function send2hoursReminders(desiredChannelId, client, EmbedBuilder) {
                             _1dReminder: true,
                             _2hReminder: true,
                         }, 
-                    } // Set _5d, _2d, _1d, _2h to true
+                    }
                 );
             } catch (error) {
-                console.error("❌ Error setting the _5d, _2d, _1d, _2h Reminder to true:", error.message);
+                console.error("❌ Error setting the _2h Reminder to true:", error.message);
             }
         }
-
-        //console.log(`Sent ${contests.length} reminders.`);
     } catch (error) {
         console.error('Error sending reminders:', error.message);
     }
@@ -340,15 +338,15 @@ async function send20minutesReminders(desiredChannelId, client, EmbedBuilder) {
                 }
                 ///await channel.send(reminderMessage);
                 await channel.send({ content: `📊 Starts in ${remainingTimeString}\n${contest.name}\n@everyone`, embeds: [embed] });
-                console.log("✅ Sent Reminder to Discord successfully!");
+                console.log(`Sent 20m reminder: ${contest.name}`);
             } catch (error) {
                 console.error("❌ Error sending reminder to Discord:", error.message);
             }
 
-            // Directly update the _1dReminder field in the database
+            // Directly update the _20mReminder field in the database
             try {
                 await upcomingContest.updateMany(
-                    { link: contest.link }, // Filter by contest ID
+                    { link: contest.link },
                     { 
                         $set: { 
                             _5dReminder: true, 
@@ -357,14 +355,12 @@ async function send20minutesReminders(desiredChannelId, client, EmbedBuilder) {
                             _2hReminder: true,
                             _20mReminder: true
                         },
-                    } // Set _5d, _2d, _1d, _2h to true
+                    }
                 );
             } catch (error) {
-                console.error("❌ Error setting the _5d, _2d, _1d, _2h Reminder to true:", error.message);
+                console.error("❌ Error setting the _20m Reminder to true:", error.message);
             }
         }
-
-        //console.log(`Sent ${contests.length} reminders.`);
     } catch (error) {
         console.error('Error sending reminders:', error.message);
     }
