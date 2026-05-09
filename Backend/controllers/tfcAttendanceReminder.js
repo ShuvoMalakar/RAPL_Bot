@@ -2,6 +2,7 @@ const moment = require('moment-timezone');
 const TFC = require('../models/tfcSchema');
 const TFCAttendance = require('../models/tfcAttendanceSchema');
 const vjContests = require('../models/vjcontestdb2');
+const UserMapping = require('../models/userMapping');
 
 const DISCORD_MAX_LENGTH = 2000;
 
@@ -107,17 +108,14 @@ async function sendAttendanceReminder(client) {
 
     // Message 1: Users who didn't provide starting attendance
     if (noStartingHandles.length > 0) {
-        // Try to find discord IDs from previous attendance records
-        const previousRecords = await TFCAttendance.find({
+        // Find discord IDs from UserMapping
+        const mappings = await UserMapping.find({
             vjHandle: { $in: noStartingHandles },
-            tfcId: { $ne: targetTFC._id },
         });
 
         const handleToDiscordId = {};
-        for (const rec of previousRecords) {
-            if (rec.discordId && !handleToDiscordId[rec.vjHandle]) {
-                handleToDiscordId[rec.vjHandle] = rec.discordId;
-            }
+        for (const mapping of mappings) {
+            handleToDiscordId[mapping.vjHandle] = mapping.discordId;
         }
 
         const mentions = noStartingHandles.map(handle => {

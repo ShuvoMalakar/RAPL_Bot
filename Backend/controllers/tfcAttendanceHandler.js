@@ -2,6 +2,7 @@ const moment = require('moment-timezone');
 const TFC = require('../models/tfcSchema');
 const TFCAttendance = require('../models/tfcAttendanceSchema');
 const users = require('../models/userSchemadb2');
+const UserMapping = require('../models/userMapping');
 
 // Configurable valid room numbers
 const VALID_ROOMS = ['101', '102', '103', '104', '201', '202', '203', 'RAPL'];
@@ -116,6 +117,20 @@ const validateCommon = async (message, studentId, vjHandle, roomNo, roomRequired
         await message.reply(`❌ VJudge handle mismatch. Roll \`${studentId}\` is registered with handle \`${registeredHandle}\`, not \`${vjHandle}\`.`);
         return null;
     }
+
+    // Check UserMapping: ensure this roll isn't mapped to a different Discord user
+    const existingMapping = await UserMapping.findOne({ studentId });
+    if (existingMapping && existingMapping.discordId !== message.author.id) {
+        await message.reply(`❌ Roll \`${studentId}\` is already mapped to a different Discord user (<@${existingMapping.discordId}>). Contact an admin if this is wrong.`);
+        return null;
+    }
+
+    // Create or update the mapping (always update vjHandle as it may change on the website)
+    await UserMapping.findOneAndUpdate(
+        { studentId },
+        { discordId: message.author.id, vjHandle },
+        { upsert: true }
+    );
 
     return user;
 };
