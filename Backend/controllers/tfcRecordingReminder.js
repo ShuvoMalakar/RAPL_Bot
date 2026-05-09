@@ -2,6 +2,7 @@ const TFC = require('../models/tfcSchema');
 const moment = require('moment-timezone');
 const { Client, GatewayIntentBits, EmbedBuilder} = require('discord.js');
 const vjContests = require('../models/vjcontestdb2');
+const RecordingLink = require('../models/recordingLink');
 
 function parseDurationHours(durationStr) {
     if (!durationStr) return 4; // default 4 hours
@@ -61,8 +62,17 @@ const HandlesWithoutRecordingLinks = async (hour, reminderFlag) => {
             );
 
             if (vjContest?.data) {
-                const handlesWithoutLinks = vjContest.data
-                    .map(entry => entry.handle);
+                const allHandles = vjContest.data.map(entry => entry.handle);
+
+                // Find handles that already submitted recording links
+                const submittedLinks = await RecordingLink.find(
+                    { contestId: String(tfc.contestId) },
+                    { vjHandle: 1 }
+                );
+                const submittedHandles = new Set(submittedLinks.map(r => r.vjHandle));
+
+                // Filter out handles that already submitted
+                const handlesWithoutLinks = allHandles.filter(h => !submittedHandles.has(h));
 
                 if (handlesWithoutLinks.length > 0) {
                     const submitDeadline = endTime.clone().add(48, 'hours').toDate();
