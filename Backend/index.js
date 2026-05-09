@@ -50,10 +50,11 @@ client.on('messageCreate', async (message) => {
 
 });
 
+// Start bot login (don't block server startup)
 startBot(client);
 
-// Database Connection
-Promise.all([db1.asPromise(), db2.asPromise(), startBot(client)])
+// Database Connection — start server as soon as DBs are ready (Render needs the port open quickly)
+Promise.all([db1.asPromise(), db2.asPromise()])
     .then(() => {
         console.log("All databases connected!");
         app.listen(port, () => {
