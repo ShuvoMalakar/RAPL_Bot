@@ -342,7 +342,7 @@ async function logUpcomingContests(desiredChannelId, client, EmbedBuilder) {
 
     console.log('Upcoming Contests:');
     let discordMessage = '';
-    const maxContests = 6; // Limit to 6 contests
+    let maxContests = 6; // Limit to 6 contests
     if(contests.length < maxContests){
         maxContests = contests.length;
     }
