@@ -56,7 +56,7 @@ async function tfc5DayReminders(desiredChannelId, client, EmbedBuilder) {
             // Directly update the _5dReminder field in the database
             try {
                 await TFC.updateOne(
-                    { name: contest.name },
+                    { _id: contest._id },
                     { $set: { _5dReminder: true } }
                 );
             } catch (error) {
@@ -121,7 +121,7 @@ async function tfc2DayReminders(desiredChannelId, client, EmbedBuilder) {
             // Directly update the _5dReminder field in the database
             try {
                 await TFC.updateOne(
-                    { name: contest.name },
+                    { _id: contest._id },
                     { 
                         $set: { 
                             _5dReminder: true, 
@@ -191,7 +191,7 @@ for (const contest of contests) {
     // Directly update the _5dReminder field in the database
     try {
         await TFC.updateOne(
-            { name: contest.name },
+            { _id: contest._id },
                     { 
                         $set: { 
                             _5dReminder: true, 
@@ -262,7 +262,7 @@ async function tfc2hoursReminders(desiredChannelId, client, EmbedBuilder) {
             // Directly update the _5dReminder field in the database
             try {
                 await TFC.updateOne(
-                    { name: contest.name },
+                    { _id: contest._id },
                     { 
                         $set: { 
                             _5dReminder: true, 
@@ -335,7 +335,7 @@ async function tfc20minutesReminders(desiredChannelId, client, EmbedBuilder) {
         // Directly update the _5dReminder field in the database
         try {
             await TFC.updateOne(
-                { name: contest.name },
+                { _id: contest._id },
                     { 
                         $set: { 
                             _5dReminder: true, 

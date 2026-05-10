@@ -353,7 +353,7 @@ async function logUpcomingContests(desiredChannelId, client, EmbedBuilder) {
             .tz('Asia/Dhaka')
             .format('DD/MM/YY h:mmA');
 
-        discordMessage += `[${contest.name}](${contest.link})|${formattedTime}\n`;
+        //discordMessage += `[${contest.name}](${contest.link})|${formattedTime}\n`;
     });
 
     // Send the message to Discord

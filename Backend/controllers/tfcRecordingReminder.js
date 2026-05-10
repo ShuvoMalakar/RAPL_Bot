@@ -152,7 +152,7 @@ const RecordingLinksRem = async (desiredChannelId, client, EmbedBuilder) => {
         }
 
         const _60mRem = "_1h";
-        const _3hRem = "_2h";
+        const _3hRem = "_3h";
         const _1dRem = "_24h";
         const _42hRem = "_42h";
         const _48hRem = "_48h";
